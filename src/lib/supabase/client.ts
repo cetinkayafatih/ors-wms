@@ -11,26 +11,24 @@ export function createClient(): SupabaseClient {
 
   if (!url || !key) {
     // Return a proxy that makes all queries fail gracefully in demo mode
+    const demoResponse = { data: null, error: { message: 'DEMO_MODE' }, count: null };
+
+    const createQueryProxy = (): unknown =>
+      new Proxy({}, {
+        get(_, prop) {
+          // Make the proxy awaitable - resolve with demoResponse
+          if (prop === 'then') {
+            return (resolve?: (v: unknown) => void) => resolve?.(demoResponse);
+          }
+          // Any method call returns a new chainable proxy
+          return () => createQueryProxy();
+        },
+      });
+
     return new Proxy({} as SupabaseClient, {
       get(_target, prop) {
         if (prop === 'from') {
-          return () =>
-            new Proxy(
-              {},
-              {
-                get() {
-                  return () =>
-                    new Proxy(
-                      {},
-                      {
-                        get() {
-                          return () => Promise.resolve({ data: null, error: { message: 'DEMO_MODE' }, count: null });
-                        },
-                      }
-                    );
-                },
-              }
-            );
+          return () => createQueryProxy();
         }
         if (prop === 'auth') {
           return {

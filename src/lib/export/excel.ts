@@ -100,30 +100,6 @@ export function exportABCAnalysisExcel(
   );
 }
 
-export function exportSPCDataExcel(
-  subgroups: Array<{
-    subgroupNumber: number;
-    metricName: string;
-    sampleValues: number[];
-    mean: number;
-    range: number;
-  }>
-) {
-  createWorkbook(
-    [{
-      name: 'SPC Olcumleri',
-      data: subgroups.map((sg) => ({
-        'Alt Grup': sg.subgroupNumber,
-        'Metrik': sg.metricName,
-        'Ortalama': sg.mean,
-        'Aralik': sg.range,
-        ...sg.sampleValues.reduce((acc, v, i) => ({ ...acc, [`Olcum ${i + 1}`]: v }), {}),
-      })),
-    }],
-    'spc-olcum-raporu.xlsx'
-  );
-}
-
 export function exportComparisonExcel(
   metrics: Array<{
     metricNameTr: string;

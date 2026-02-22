@@ -24,7 +24,6 @@ const PAGE_TITLES: Record<string, string> = {
   '/receiving': 'Mal Kabul',
   '/shipping': 'Sevkiyat',
   '/stock-count': 'Stok Sayimi',
-  '/quality': 'Kalite Kontrol',
   '/reports': 'Raporlar',
   '/users': 'Kullanici Yonetimi',
   '/suppliers': 'Tedarikci Yonetimi',

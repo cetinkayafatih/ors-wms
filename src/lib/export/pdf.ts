@@ -33,42 +33,6 @@ function createPDFBase(options: PDFOptions): jsPDF {
   return doc;
 }
 
-export function exportInspectionReportPDF(
-  inspections: Array<{
-    inspection_number: string;
-    reference_type: string;
-    item_sku: string;
-    item_name: string;
-    result: string;
-    defect_count: number;
-    inspection_date: string;
-    inspector_name: string;
-  }>
-) {
-  const doc = createPDFBase({
-    title: 'Kalite Muayene Raporu',
-    subtitle: `Toplam: ${inspections.length} muayene`,
-  });
-
-  autoTable(doc, {
-    startY: 48,
-    head: [['Muayene No', 'SKU', 'Urun', 'Sonuc', 'Hata', 'Tarih', 'Kontrolor']],
-    body: inspections.map((i) => [
-      i.inspection_number,
-      i.item_sku,
-      i.item_name,
-      i.result === 'passed' ? 'Gecti' : i.result === 'failed' ? 'Kaldi' : 'Sartli',
-      String(i.defect_count),
-      new Date(i.inspection_date).toLocaleDateString('tr-TR'),
-      i.inspector_name,
-    ]),
-    styles: { fontSize: 8 },
-    headStyles: { fillColor: [30, 64, 175] },
-  });
-
-  doc.save('kalite-muayene-raporu.pdf');
-}
-
 export function exportABCAnalysisPDF(
   results: Array<{
     rank: number;
@@ -108,43 +72,6 @@ export function exportABCAnalysisPDF(
   });
 
   doc.save('abc-analiz-raporu.pdf');
-}
-
-export function exportSPCReportPDF(
-  data: {
-    sigmaLevel: number;
-    dpmo: number;
-    accuracy: number;
-    cpk: number;
-    cp: number;
-    xbarUCL: number;
-    xbarCL: number;
-    xbarLCL: number;
-  }
-) {
-  const doc = createPDFBase({
-    title: 'SPC Raporu',
-    subtitle: 'Istatistiksel Surec Kontrol Ozeti',
-  });
-
-  autoTable(doc, {
-    startY: 48,
-    head: [['Metrik', 'Deger', 'Durum']],
-    body: [
-      ['Sigma Seviyesi', `${data.sigmaLevel}σ`, data.sigmaLevel >= 4 ? 'Iyi' : 'Gelistirilmeli'],
-      ['DPMO', data.dpmo.toLocaleString('tr-TR'), data.dpmo < 6210 ? 'Iyi' : 'Gelistirilmeli'],
-      ['Dogruluk', `%${data.accuracy}`, data.accuracy >= 99 ? 'Iyi' : 'Gelistirilmeli'],
-      ['Cpk', String(data.cpk), data.cpk >= 1.33 ? 'Yeterli' : 'Yetersiz'],
-      ['Cp', String(data.cp), data.cp >= 1.33 ? 'Yeterli' : 'Yetersiz'],
-      ['X-bar UCL', String(data.xbarUCL), ''],
-      ['X-bar CL', String(data.xbarCL), ''],
-      ['X-bar LCL', String(data.xbarLCL), ''],
-    ],
-    styles: { fontSize: 10 },
-    headStyles: { fillColor: [99, 102, 241] },
-  });
-
-  doc.save('spc-raporu.pdf');
 }
 
 export function exportComparisonReportPDF(

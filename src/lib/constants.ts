@@ -8,7 +8,6 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   warehouse_manager: 'Depo Muduru',
   operator_receiving: 'Kabul Operatoru',
   operator_shipping: 'Sevkiyat Operatoru',
-  quality_control: 'Kalite Kontrol',
   viewer: 'Izleyici',
 };
 
@@ -107,7 +106,6 @@ export const PERMISSIONS: Record<UserRole, Record<string, string[]>> = {
     locations: ['view', 'create', 'edit', 'delete'],
     receiving: ['view', 'create', 'edit', 'delete'],
     shipping: ['view', 'create', 'edit', 'delete'],
-    quality: ['view', 'create', 'edit', 'delete'],
     stock_count: ['view', 'create', 'edit', 'delete'],
     reports: ['view', 'export'],
     users: ['view', 'create', 'edit', 'delete'],
@@ -122,7 +120,6 @@ export const PERMISSIONS: Record<UserRole, Record<string, string[]>> = {
     locations: ['view', 'create', 'edit'],
     receiving: ['view', 'create', 'edit'],
     shipping: ['view', 'create', 'edit'],
-    quality: ['view'],
     stock_count: ['view', 'create', 'edit'],
     reports: ['view', 'export'],
     users: ['view'],
@@ -137,7 +134,6 @@ export const PERMISSIONS: Record<UserRole, Record<string, string[]>> = {
     locations: ['view'],
     receiving: ['view', 'create', 'edit'],
     shipping: ['view'],
-    quality: ['view', 'create'],
     stock_count: ['view'],
     reports: ['view'],
     users: [],
@@ -152,22 +148,6 @@ export const PERMISSIONS: Record<UserRole, Record<string, string[]>> = {
     locations: ['view'],
     receiving: ['view'],
     shipping: ['view', 'create', 'edit'],
-    quality: ['view', 'create'],
-    stock_count: ['view'],
-    reports: ['view'],
-    users: [],
-    suppliers: ['view'],
-    alerts: ['view'],
-    settings: [],
-  },
-  quality_control: {
-    dashboard: ['view'],
-    products: ['view'],
-    inventory: ['view'],
-    locations: ['view'],
-    receiving: ['view'],
-    shipping: ['view'],
-    quality: ['view', 'create', 'edit'],
     stock_count: ['view'],
     reports: ['view'],
     users: [],
@@ -182,7 +162,6 @@ export const PERMISSIONS: Record<UserRole, Record<string, string[]>> = {
     locations: ['view'],
     receiving: ['view'],
     shipping: ['view'],
-    quality: ['view'],
     stock_count: ['view'],
     reports: ['view', 'export'],
     users: [],
@@ -227,12 +206,6 @@ export const METRIC_CATEGORY_LABELS: Record<string, string> = {
   speed: 'Hiz',
   efficiency: 'Verimlilik',
   quality: 'Kalite',
-};
-
-export const SPC_METRIC_LABELS: Record<string, string> = {
-  picking_accuracy: 'Toplama Dogrulugu',
-  inventory_accuracy: 'Envanter Dogrulugu',
-  order_cycle_time: 'Siparis Dongu Suresi',
 };
 
 export function hasPermission(

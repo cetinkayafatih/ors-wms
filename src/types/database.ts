@@ -3,7 +3,6 @@ export type UserRole =
   | 'warehouse_manager'
   | 'operator_receiving'
   | 'operator_shipping'
-  | 'quality_control'
   | 'viewer';
 
 export type MovementType =
@@ -54,14 +53,10 @@ export type CountType = 'full' | 'cycle' | 'spot';
 export type CountStatus = 'planned' | 'in_progress' | 'completed' | 'cancelled';
 export type ZoneType = 'receiving' | 'storage' | 'picking' | 'shipping' | 'quarantine' | 'returns';
 export type LocationType = 'bulk' | 'pick' | 'floor' | 'pallet';
-export type DefectSeverity = 'critical' | 'major' | 'minor';
-export type DefectCategory = 'knitting' | 'linking' | 'dyeing' | 'finishing';
 export type SockType = 'ankle' | 'crew' | 'knee_high' | 'no_show' | 'quarter' | 'thigh_high';
 export type WarehouseType = 'raw_material' | 'finished_goods' | 'mixed';
 export type RawMaterialCategory = 'yarn' | 'elastic' | 'dye' | 'label' | 'packaging' | 'chemical';
 export type OrderPriority = 'low' | 'normal' | 'high' | 'urgent';
-export type InspectionResult = 'passed' | 'failed' | 'conditional';
-
 export interface ProductCategory {
   id: string;
   name: string;
@@ -415,39 +410,6 @@ export interface StockCountLine {
   location?: WarehouseLocation;
   product?: Product;
   raw_material?: RawMaterial;
-}
-
-export interface QualityInspection {
-  id: string;
-  inspection_number: string;
-  reference_type: string;
-  reference_id: string;
-  product_id: string | null;
-  raw_material_id: string | null;
-  lot_number: string | null;
-  sample_size: number | null;
-  inspected_quantity: number | null;
-  passed_quantity: number | null;
-  failed_quantity: number | null;
-  defect_types: Record<string, number> | null;
-  overall_result: InspectionResult | null;
-  inspector_id: string;
-  inspected_at: string;
-  notes: string | null;
-  images: string[] | null;
-  created_at: string;
-  product?: Product;
-  raw_material?: RawMaterial;
-}
-
-export interface DefectType {
-  id: string;
-  code: string;
-  name: string;
-  severity: DefectSeverity;
-  category: DefectCategory | null;
-  description: string | null;
-  is_active: boolean;
 }
 
 export interface AlertRule {

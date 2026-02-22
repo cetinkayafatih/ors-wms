@@ -10,14 +10,12 @@ import {
   TruckIcon,
   ShoppingCart,
   ClipboardCheck,
-  ShieldCheck,
   FileBarChart2,
   Users,
   Factory,
   Bell,
   Settings,
   ChevronDown,
-  Activity,
   BarChart3,
   GitBranch,
   ArrowLeftRight,
@@ -93,21 +91,9 @@ const operationNavItems = [
     icon: ClipboardCheck,
     module: 'stock_count',
   },
-  {
-    title: 'Kalite Kontrol',
-    href: '/quality',
-    icon: ShieldCheck,
-    module: 'quality',
-  },
 ];
 
 const analyticsNavItems = [
-  {
-    title: 'SPC & Alti Sigma',
-    href: '/analytics/spc',
-    icon: Activity,
-    module: 'reports',
-  },
   {
     title: 'EOQ/ABC/Tahmin',
     href: '/analytics/forecasting',

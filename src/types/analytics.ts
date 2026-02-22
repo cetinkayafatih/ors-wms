@@ -1,49 +1,7 @@
 /**
  * Analytics Module Types
- * SPC, Forecasting, Lean, Comparison
+ * Forecasting, Lean, Comparison
  */
-
-// ─── SPC Types ───────────────────────────────────────────────
-
-export interface SPCSubgroup {
-  id: string;
-  subgroupNumber: number;
-  metricName: string;
-  sampleValues: number[];
-  mean: number;
-  range: number;
-  timestamp: string;
-}
-
-export interface SPCLimits {
-  UCL: number;
-  CL: number;
-  LCL: number;
-}
-
-export interface XbarRResult {
-  xbarLimits: SPCLimits;
-  rLimits: SPCLimits;
-  subgroups: SPCSubgroup[];
-  outOfControl: number[];
-}
-
-export interface IMRResult {
-  iLimits: SPCLimits;
-  mrLimits: SPCLimits;
-  individuals: number[];
-  movingRanges: number[];
-  outOfControl: number[];
-}
-
-export interface CapabilityResult {
-  cp: number;
-  cpk: number;
-  mean: number;
-  stdDev: number;
-  usl: number;
-  lsl: number;
-}
 
 // ─── Forecasting Types ───────────────────────────────────────
 
@@ -193,9 +151,3 @@ export interface DescriptiveStatsResult {
   count: number;
 }
 
-// ─── Common ──────────────────────────────────────────────────
-
-export interface SPCMetricOption {
-  value: string;
-  label: string;
-}

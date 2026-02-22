@@ -242,30 +242,6 @@ export function calculateVolumeUtilization(
 }
 
 /**
- * Pick accuracy (DPMO - Defects Per Million Opportunities)
- */
-export function calculateDPMO(
-  defects: number,
-  opportunities: number
-): { dpmo: number; sigmaLevel: number; accuracy: number } {
-  if (opportunities <= 0) return { dpmo: 0, sigmaLevel: 6, accuracy: 100 };
-
-  const dpmo = Math.round((defects / opportunities) * 1000000);
-  const accuracy = Math.round((1 - defects / opportunities) * 10000) / 100;
-
-  // Approximate sigma level
-  let sigmaLevel: number;
-  if (dpmo <= 3.4) sigmaLevel = 6;
-  else if (dpmo <= 233) sigmaLevel = 5;
-  else if (dpmo <= 6210) sigmaLevel = 4;
-  else if (dpmo <= 66807) sigmaLevel = 3;
-  else if (dpmo <= 308538) sigmaLevel = 2;
-  else sigmaLevel = 1;
-
-  return { dpmo, sigmaLevel, accuracy };
-}
-
-/**
  * Carrying cost calculation
  */
 export function calculateCarryingCost(

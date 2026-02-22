@@ -156,27 +156,35 @@ export default function DashboardPage() {
   };
 
   const fetchKPIs = async (supabase: ReturnType<typeof createClient>) => {
-    const { count: skuCount } = await supabase
+    const { count: skuCount, error: e1 } = await supabase
       .from('products')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'active');
 
-    const { count: lowStockCount } = await supabase
+    if (e1) throw e1;
+
+    const { count: lowStockCount, error: e2 } = await supabase
       .from('inventory')
       .select('id, quantity_on_hand, product:products!inner(min_stock_level)', { count: 'exact', head: true })
       .filter('quantity_on_hand', 'lt', 'product.min_stock_level');
 
-    const { count: pendingOrdersCount } = await supabase
+    if (e2) throw e2;
+
+    const { count: pendingOrdersCount, error: e3 } = await supabase
       .from('sales_orders')
       .select('*', { count: 'exact', head: true })
       .not('status', 'in', '(shipped,delivered,cancelled)');
 
+    if (e3) throw e3;
+
     const today = new Date();
-    const { count: todayReceiptsCount } = await supabase
+    const { count: todayReceiptsCount, error: e4 } = await supabase
       .from('goods_receipts')
       .select('*', { count: 'exact', head: true })
       .gte('received_date', startOfDay(today).toISOString())
       .lte('received_date', endOfDay(today).toISOString());
+
+    if (e4) throw e4;
 
     setKpis({
       totalSKUs: skuCount || 0,

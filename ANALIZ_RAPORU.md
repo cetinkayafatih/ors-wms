@@ -1,175 +1,175 @@
-# Corap WMS - Detayli Proje Analiz Raporu
+# Çorap WMS - Detaylı Proje Analiz Raporu
 
-## Corap Fabrikasi Depo Yonetim Sistemi (Warehouse Management System)
+## Çorap Fabrikası Depo Yönetim Sistemi (Warehouse Management System)
 
-**Proje Adi:** Corap WMS
-**Tanim:** Corap fabrikasina ozel gelistirilmis, endustri muhendisligi analitik modulleri entegre web tabanli depo yonetim sistemi
-**Gelistirme Ortami:** Next.js 16.1.6 + React 19.2.3 + TypeScript (Strict Mode) + Supabase
-**Durum:** Uretim ortamina hazir (Production-Ready)
+**Proje Adı:** Çorap WMS
+**Tanım:** Çorap fabrikasına özel geliştirilmiş, endüstri mühendisliği analitik modülleri entegre web tabanlı depo yönetim sistemi
+**Geliştirme Ortamı:** Next.js 16.1.6 + React 19.2.3 + TypeScript (Strict Mode) + Supabase
+**Durum:** Üretim ortamına hazır (Production-Ready)
 
 ---
 
-### Sayisal Proje Ozeti
+### Sayısal Proje Özeti
 
-| Metrik | Deger |
+| Metrik | Değer |
 |--------|-------|
 | Toplam Kaynak Dosya | 99 |
-| Toplam Kod Satiri | ~18.073 |
-| Hesaplama Fonksiyonu | 33 (5 kutuphane dosyasi) |
-| Server Action (API Rotasi) | 49 |
-| Sayfa Modulu | 19 (11 WMS + 4 Analitik + 4 Destek) |
-| Paylasilan Bilesen | 11 |
-| shadcn/ui Bilesen | 28 |
+| Toplam Kod Satırı | ~18.073 |
+| Hesaplama Fonksiyonu | 33 (5 kütüphane dosyası) |
+| Server Action (API Rotası) | 49 |
+| Sayfa Modülü | 19 (11 WMS + 4 Analitik + 4 Destek) |
+| Paylaşılan Bileşen | 11 |
+| shadcn/ui Bileşen | 28 |
 | TypeScript Entity Tipi | 25+ |
 | Enum Tipi | 13+ |
-| Kullanici Rolu | 6 |
+| Kullanıcı Rolü | 6 |
 | Export Fonksiyonu | 9 (4 PDF + 5 Excel) |
-| Turkce Etiket Sozlugu | 10 |
-| TypeScript Hata Sayisi | 0 |
+| Türkçe Etiket Sözlüğü | 10 |
+| TypeScript Hata Sayısı | 0 |
 
 ---
 
-## 1. Giris ve Proje Amaci
+## 1. Giriş ve Proje Amacı
 
-Bu belge, bir corap fabrikasi icin gelistirilen Depo Yonetim Sistemi'nin (Warehouse Management System - WMS) kapsamli teknik analizini sunmaktadir. Proje, klasik depo yonetim operasyonlarini dijitallestirmenin otesine gecerek, endustri muhendisligi disiplininden alinan istatistiksel ve analitik yontemleri dogrudan sisteme entegre etmistir.
+Bu belge, bir çorap fabrikası için geliştirilen Depo Yönetim Sistemi'nin (Warehouse Management System - WMS) kapsamlı teknik analizini sunmaktadır. Proje, klasik depo yönetim operasyonlarını dijitalleştirmenin ötesine geçerek, endüstri mühendisliği disiplininden alınan istatistiksel ve analitik yöntemleri doğrudan sisteme entegre etmiştir.
 
-Sistem, asagidaki uc temel amaca hizmet etmektedir:
+Sistem, aşağıdaki üç temel amaca hizmet etmektedir:
 
-1. **Operasyonel Dijitallesme:** Mal kabul, sevkiyat, stok sayimi, kalite kontrol gibi gunluk depo operasyonlarinin tamamen dijital ortamda yonetilmesi
-2. **Veri Tabanli Karar Destek:** SPC, EOQ, ABC siniflandirmasi, talep tahmini gibi IE araclarinin gercek depo verileriyle canli olarak calistirilmasi
-3. **Olculebilir Iyilestirme:** WMS oncesi ve sonrasi operasyonel metriklerin istatistiksel testlerle karsilastirilmasi ve iyilestirmenin kanitlanmasi
+1. **Operasyonel Dijitalleşme:** Mal kabul, sevkiyat, stok sayımı, kalite kontrol gibi günlük depo operasyonlarının tamamen dijital ortamda yönetilmesi
+2. **Veri Tabanlı Karar Destek:** SPC, EOQ, ABC sınıflandırması, talep tahmini gibi IE araçlarının gerçek depo verileriyle canlı olarak çalıştırılması
+3. **Ölçülebilir İyileştirme:** WMS öncesi ve sonrası operasyonel metriklerin istatistiksel testlerle karşılaştırılması ve iyileştirmenin kanıtlanması
 
 ---
 
-## 2. Problem Tanimi ve Motivasyon
+## 2. Problem Tanımı ve Motivasyon
 
-### 2.1 Corap Fabrikasinda Depo Yonetiminin Zorlugu
+### 2.1 Çorap Fabrikasında Depo Yönetiminin Zorluğu
 
-Corap uretimi, kucuk boyutlu ancak yuksek cesitlilikteki urunlerden (model x renk x beden = binlerce SKU) olusan bir envanteri yonetmeyi gerektirir. Geleneksel yontemlerle bu cesitliligi kontrol etmek ciddi operasyonel sorunlara yol acar:
+Çorap üretimi, küçük boyutlu ancak yüksek çeşitlilikteki ürünlerden (model x renk x beden = binlerce SKU) oluşan bir envanteri yönetmeyi gerektirir. Geleneksel yöntemlerle bu çeşitliliği kontrol etmek ciddi operasyonel sorunlara yol açar:
 
-- **Yuksek SKU Cesitliligi:** Bir corap modeli, 6 renk ve 5 beden secenegiyle 30 farkli SKU olusturur. 20 model icin bu sayi 600'e cikar.
-- **Hammadde Karmasikligi:** Iplik, elastik, boya, etiket, ambalaj, kimyasal olmak uzere 6 farkli hammadde kategorisi vardir.
-- **Mevsimsellik:** Talep dagilimi mevsimlere gore buyuk degiskenlik gosterir.
+- **Yüksek SKU Çeşitliliği:** Bir çorap modeli, 6 renk ve 5 beden seçeneğiyle 30 farklı SKU oluşturur. 20 model için bu sayı 600'e çıkar.
+- **Hammadde Karmaşıklığı:** İplik, elastik, boya, etiket, ambalaj, kimyasal olmak üzere 6 farklı hammadde kategorisi vardır.
+- **Mevsimsellik:** Talep dağılımı mevsimlere göre büyük değişkenlik gösterir.
 
-### 2.2 Manuel Sureclerin Sorunlari
+### 2.2 Manuel Süreçlerin Sorunları
 
-| Sorun | Aciklama | Etkisi |
+| Sorun | Açıklama | Etkisi |
 |-------|----------|--------|
-| Hatali Toplama | Benzer gorunumlu urunlerin karistirilmasi | Musteri iadeleri, maliyet artisi |
-| Kayip Stok | Sayim farkliliklari, kayit disi hareketler | Stok tukenmesi, satis kaybi |
-| Geciken Sevkiyat | Siparis onceliklendirme yetersizligi | Musteri memnuniyetsizligi |
-| Envanter Tutarsizligi | Fiziksel stok ile kayit uyumsuzlugu | Yanlis satin alma kararlari |
-| Kapasite Israfi | Depo alaninin verimsiz kullanimi | Ek depo maliyeti |
-| Kalite Takipsizligi | Kusurlu urunlerin tespit edilememesi | Iade orani artisi |
+| Hatalı Toplama | Benzer görünümlü ürünlerin karıştırılması | Müşteri iadeleri, maliyet artışı |
+| Kayıp Stok | Sayım farklılıkları, kayıt dışı hareketler | Stok tükenmesi, satış kaybı |
+| Geciken Sevkiyat | Sipariş önceliklendirme yetersizliği | Müşteri memnuniyetsizliği |
+| Envanter Tutarsızlığı | Fiziksel stok ile kayıt uyumsuzluğu | Yanlış satın alma kararları |
+| Kapasite İsrafı | Depo alanının verimsiz kullanımı | Ek depo maliyeti |
+| Kalite Takipsizliği | Kusurlu ürünlerin tespit edilememesi | İade oranı artışı |
 
-### 2.3 WMS Cozum Onerisi
+### 2.3 WMS Çözüm Önerisi
 
-Sistem, yukaridaki sorunlari asagidaki yaklasimlarla cozer:
+Sistem, yukarıdaki sorunları aşağıdaki yaklaşımlarla çözer:
 
-- **Barkod Tabanli Takip:** Her urun hareketi barkod okutarak kayit altina alinir
-- **Gercek Zamanli Envanter:** Stok seviyeleri anlik olarak guncellenir
-- **Otomatik Uyarilar:** Dusuk stok, fazla stok, kapasite asimi icin otomatik bildirimler
-- **Konum Bazli Yonetim:** Depo > Zon > Raf > Bin hiyerarsisinde konum takibi
-- **Rol Tabanli Erisim:** Her kullanicinin yetkisi rolune gore belirlenir
-- **Analitik Karar Destek:** IE hesaplamalariyla veri odakli karar verme
+- **Barkod Tabanlı Takip:** Her ürün hareketi barkod okutarak kayıt altına alınır
+- **Gerçek Zamanlı Envanter:** Stok seviyeleri anlık olarak güncellenir
+- **Otomatik Uyarılar:** Düşük stok, fazla stok, kapasite aşımı için otomatik bildirimler
+- **Konum Bazlı Yönetim:** Depo > Zon > Raf > Bin hiyerarşisinde konum takibi
+- **Rol Tabanlı Erişim:** Her kullanıcının yetkisi rolüne göre belirlenir
+- **Analitik Karar Destek:** IE hesaplamalarıyla veri odaklı karar verme
 
 ---
 
 ## 3. Sistem Mimarisi
 
-### 3.1 Teknoloji Yigini
+### 3.1 Teknoloji Yığını
 
 | Katman | Teknoloji | Versiyon | Rol |
 |--------|-----------|----------|-----|
 | Framework | Next.js | 16.1.6 | Full-stack React framework (App Router) |
-| UI Library | React | 19.2.3 | Kullanici arayuzu |
-| Dil | TypeScript | 5.x (Strict) | Tip guvenli gelistirme |
-| Veritabani | Supabase | 2.97.0 | PostgreSQL + Auth + Realtime |
+| UI Library | React | 19.2.3 | Kullanıcı arayüzü |
+| Dil | TypeScript | 5.x (Strict) | Tip güvenli geliştirme |
+| Veritabanı | Supabase | 2.97.0 | PostgreSQL + Auth + Realtime |
 | Stil | Tailwind CSS | 4.x | Utility-first CSS |
-| Bilesen Kutuphanesi | shadcn/ui (Radix UI) | 1.4.3 | Erisilebilir UI bilesenler |
-| Grafik | Recharts | 2.15.4 | Veri gorsellestirme |
-| Tablo | TanStack React Table | 8.21.3 | Gelismis veri tablolari |
-| Form | React Hook Form + Zod | 7.71.2 / 4.3.6 | Form yonetimi ve validasyon |
-| Durum Yonetimi | Zustand | 5.0.11 | Global state |
+| Bileşen Kütüphanesi | shadcn/ui (Radix UI) | 1.4.3 | Erişilebilir UI bileşenler |
+| Grafik | Recharts | 2.15.4 | Veri görselleştirme |
+| Tablo | TanStack React Table | 8.21.3 | Gelişmiş veri tabloları |
+| Form | React Hook Form + Zod | 7.71.2 / 4.3.6 | Form yönetimi ve validasyon |
+| Durum Yönetimi | Zustand | 5.0.11 | Global state |
 | PDF | jsPDF + AutoTable | 4.2.0 / 5.0.7 | PDF export |
 | Excel | SheetJS (XLSX) | 0.18.5 | Excel export |
 | Barkod | html5-qrcode | 2.3.8 | Kamera ile barkod okuma |
 | Tarih | date-fns | 4.1.0 | Tarih formatlama |
-| Tema | next-themes | 0.4.6 | Karanlik/acik tema |
+| Tema | next-themes | 0.4.6 | Karanlık/açık tema |
 | Bildirim | Sonner | 2.0.7 | Toast bildirimleri |
 
-### 3.2 Dosya Yapisi
+### 3.2 Dosya Yapısı
 
 ```
 src/
 ├── app/
 │   ├── layout.tsx                          # Root layout
-│   ├── page.tsx                            # Ana sayfa (yonlendirme)
+│   ├── page.tsx                            # Ana sayfa (yönlendirme)
 │   ├── (auth)/
-│   │   └── login/page.tsx                  # Giris sayfasi
+│   │   └── login/page.tsx                  # Giriş sayfası
 │   └── (dashboard)/
 │       ├── layout.tsx                      # Dashboard layout (sidebar + header)
-│       ├── dashboard/page.tsx              # Ana panel (742 satir)
-│       ├── inventory/page.tsx              # Envanter yonetimi (641 satir)
-│       ├── receiving/page.tsx              # Mal kabul (574 satir)
-│       ├── shipping/page.tsx               # Sevkiyat (559 satir)
-│       ├── products/page.tsx               # Urun yonetimi (626 satir)
-│       ├── locations/page.tsx              # Konum yonetimi (655 satir)
-│       ├── stock-count/page.tsx            # Stok sayimi (459 satir)
-│       ├── quality/page.tsx                # Kalite kontrol (506 satir)
-│       ├── suppliers/page.tsx              # Tedarikci yonetimi (400 satir)
-│       ├── alerts/page.tsx                 # Uyari sistemi (447 satir)
-│       ├── users/page.tsx                  # Kullanici yonetimi (406 satir)
-│       ├── reports/page.tsx                # Raporlama (498 satir)
-│       ├── settings/page.tsx               # Sistem ayarlari (438 satir)
+│       ├── dashboard/page.tsx              # Ana panel (742 satır)
+│       ├── inventory/page.tsx              # Envanter yönetimi (641 satır)
+│       ├── receiving/page.tsx              # Mal kabul (574 satır)
+│       ├── shipping/page.tsx               # Sevkiyat (559 satır)
+│       ├── products/page.tsx               # Ürün yönetimi (626 satır)
+│       ├── locations/page.tsx              # Konum yönetimi (655 satır)
+│       ├── stock-count/page.tsx            # Stok sayımı (459 satır)
+│       ├── quality/page.tsx                # Kalite kontrol (506 satır)
+│       ├── suppliers/page.tsx              # Tedarikçi yönetimi (400 satır)
+│       ├── alerts/page.tsx                 # Uyarı sistemi (447 satır)
+│       ├── users/page.tsx                  # Kullanıcı yönetimi (406 satır)
+│       ├── reports/page.tsx                # Raporlama (498 satır)
+│       ├── settings/page.tsx               # Sistem ayarları (438 satır)
 │       └── analytics/
-│           ├── spc/page.tsx                # SPC & Alti Sigma (468 satir)
-│           ├── forecasting/page.tsx        # EOQ/ABC/Tahmin (468 satir)
-│           ├── lean/page.tsx               # VSM & Yalin Uretim (404 satir)
-│           └── comparison/page.tsx         # Once/Sonra Analizi (449 satir)
+│           ├── spc/page.tsx                # SPC & Altı Sigma (468 satır)
+│           ├── forecasting/page.tsx        # EOQ/ABC/Tahmin (468 satır)
+│           ├── lean/page.tsx               # VSM & Yalın Üretim (404 satır)
+│           └── comparison/page.tsx         # Önce/Sonra Analizi (449 satır)
 ├── components/
-│   ├── ui/                                 # 28 shadcn/ui bilesen
-│   ├── shared/                             # 11 paylasilan bilesen
+│   ├── ui/                                 # 28 shadcn/ui bileşen
+│   ├── shared/                             # 11 paylaşılan bileşen
 │   └── layout/                             # Sidebar + Header
 ├── hooks/
-│   ├── use-auth.ts                         # Kimlik dogrulama hook'u (80 satir)
-│   ├── use-data.ts                         # Veri cekme hook'u (65 satir)
-│   └── use-mobile.ts                       # Mobil algilama (19 satir)
+│   ├── use-auth.ts                         # Kimlik doğrulama hook'u (80 satır)
+│   ├── use-data.ts                         # Veri çekme hook'u (65 satır)
+│   └── use-mobile.ts                       # Mobil algılama (19 satır)
 ├── lib/
-│   ├── calculations.ts                     # EOQ/ABC/Stok hesaplamalari (281 satir)
-│   ├── calculations-spc.ts                 # SPC hesaplamalari (188 satir)
-│   ├── calculations-forecast.ts            # Monte Carlo/Holt (127 satir)
-│   ├── calculations-lean.ts                # Takt/VSM/5S (113 satir)
-│   ├── calculations-statistics.ts          # t-test/Regresyon (204 satir)
-│   ├── constants.ts                        # Sabitler ve RBAC (244 satir)
-│   ├── formatters.ts                       # Formatlama (54 satir)
-│   ├── store.ts                            # Zustand store (37 satir)
-│   ├── utils.ts                            # Yardimci fonksiyonlar (6 satir)
+│   ├── calculations.ts                     # EOQ/ABC/Stok hesaplamaları (281 satır)
+│   ├── calculations-spc.ts                 # SPC hesaplamaları (188 satır)
+│   ├── calculations-forecast.ts            # Monte Carlo/Holt (127 satır)
+│   ├── calculations-lean.ts                # Takt/VSM/5S (113 satır)
+│   ├── calculations-statistics.ts          # t-test/Regresyon (204 satır)
+│   ├── constants.ts                        # Sabitler ve RBAC (244 satır)
+│   ├── formatters.ts                       # Formatlama (54 satır)
+│   ├── store.ts                            # Zustand store (37 satır)
+│   ├── utils.ts                            # Yardımcı fonksiyonlar (6 satır)
 │   ├── export/
-│   │   ├── pdf.ts                          # PDF export (186 satir)
-│   │   └── excel.ts                        # Excel export (182 satir)
-│   ├── actions/                            # 11 server action dosyasi (1.172 satir)
-│   ├── mock-data/                          # 6 mock veri dosyasi (498 satir)
+│   │   ├── pdf.ts                          # PDF export (186 satır)
+│   │   └── excel.ts                        # Excel export (182 satır)
+│   ├── actions/                            # 11 server action dosyası (1.172 satır)
+│   ├── mock-data/                          # 6 mock veri dosyası (498 satır)
 │   └── supabase/                           # Supabase client/server/middleware
 ├── types/
-│   ├── database.ts                         # Veritabani tipleri (565 satir)
-│   └── analytics.ts                        # Analitik tipleri (201 satir)
-└── middleware.ts                            # Auth middleware (12 satir)
+│   ├── database.ts                         # Veritabanı tipleri (565 satır)
+│   └── analytics.ts                        # Analitik tipleri (201 satır)
+└── middleware.ts                            # Auth middleware (12 satır)
 ```
 
-### 3.3 Veri Akisi Mimarisi
+### 3.3 Veri Akışı Mimarisi
 
-Sistem, Supabase veritabanina baglanti varligini calisma zamaninda kontrol eden akilli bir veri akisi mekanizmasi kullanir:
+Sistem, Supabase veritabanına bağlantı varlığını çalışma zamanında kontrol eden akıllı bir veri akışı mekanizması kullanır:
 
 ```
-Kullanici Istegi
+Kullanıcı İsteği
       │
       ▼
   Next.js Server Action
       │
-      ├── Supabase baglantisi var mi?
+      ├── Supabase bağlantısı var mı?
       │       │
-      │       ├── EVET → Supabase'den gercek veri cek
+      │       ├── EVET → Supabase'den gerçek veri çek
       │       │               │
       │       │               ▼
       │       │         PostgreSQL sorgusu
@@ -177,7 +177,7 @@ Kullanici Istegi
       │       └── HAYIR → Mock data fallback
       │                       │
       │                       ▼
-      │                 Statik ornek veri
+      │                 Statik örnek veri
       │
       ▼
   React Component (Client)
@@ -185,281 +185,281 @@ Kullanici Istegi
       ├── Loading State → LoadingSkeleton
       ├── Error State   → ErrorDisplay
       ├── Empty State   → EmptyState
-      └── Success       → Veri gorsellestirme
+      └── Success       → Veri görselleştirme
 ```
 
 Bu mimari sayesinde:
-- Supabase yapilandi edilmemis ortamlarda bile sistem demo modunda calisir
-- `MockDataBadge` bileseni ile kullaniciya mock veri kullanildigini acikca gosterir
-- Uretim ortaminda sorunsuz gecis saglanir
+- Supabase yapılandırılmamış ortamlarda bile sistem demo modunda çalışır
+- `MockDataBadge` bileşeni ile kullanıcıya mock veri kullanıldığını açıkça gösterir
+- Üretim ortamında sorunsuz geçiş sağlanır
 
-### 3.4 Bagimliliklarin Tam Listesi
+### 3.4 Bağımlılıkların Tam Listesi
 
-#### Uretim Bagimliliklari (17 paket)
+#### Üretim Bağımlılıkları (17 paket)
 
-| Paket | Versiyon | Amac |
+| Paket | Versiyon | Amaç |
 |-------|----------|------|
 | next | 16.1.6 | Full-stack React framework |
-| react | 19.2.3 | UI kutuphanesi |
+| react | 19.2.3 | UI kütüphanesi |
 | react-dom | 19.2.3 | React DOM render |
 | @supabase/supabase-js | 2.97.0 | Supabase istemcisi |
-| @supabase/ssr | 0.8.0 | Supabase SSR destegi |
-| @hookform/resolvers | 5.2.2 | Form validasyon cozucusu |
-| react-hook-form | 7.71.2 | Form yonetimi |
+| @supabase/ssr | 0.8.0 | Supabase SSR desteği |
+| @hookform/resolvers | 5.2.2 | Form validasyon çözücüsü |
+| react-hook-form | 7.71.2 | Form yönetimi |
 | zod | 4.3.6 | Schema validasyon |
-| @tanstack/react-table | 8.21.3 | Gelismis tablo yonetimi |
-| radix-ui | 1.4.3 | Erisilebilir UI primitifleri |
-| recharts | 2.15.4 | Grafik kutuphanesi |
+| @tanstack/react-table | 8.21.3 | Gelişmiş tablo yönetimi |
+| radix-ui | 1.4.3 | Erişilebilir UI primitifleri |
+| recharts | 2.15.4 | Grafik kütüphanesi |
 | zustand | 5.0.11 | State management |
-| jspdf | 4.2.0 | PDF olusturma |
-| jspdf-autotable | 5.0.7 | PDF tablo olusturma |
-| xlsx | 0.18.5 | Excel dosya olusturma |
+| jspdf | 4.2.0 | PDF oluşturma |
+| jspdf-autotable | 5.0.7 | PDF tablo oluşturma |
+| xlsx | 0.18.5 | Excel dosya oluşturma |
 | html5-qrcode | 2.3.8 | Barkod/QR okuma |
-| date-fns | 4.1.0 | Tarih islemleri |
-| next-themes | 0.4.6 | Tema yonetimi |
+| date-fns | 4.1.0 | Tarih işlemleri |
+| next-themes | 0.4.6 | Tema yönetimi |
 | sonner | 2.0.7 | Bildirim toast |
-| lucide-react | 0.575.0 | Ikon seti |
-| class-variance-authority | 0.7.1 | CSS variant yonetimi |
-| clsx | 2.1.1 | Sinif birlestirme |
-| tailwind-merge | 3.5.0 | Tailwind sinif birlestirme |
+| lucide-react | 0.575.0 | İkon seti |
+| class-variance-authority | 0.7.1 | CSS variant yönetimi |
+| clsx | 2.1.1 | Sınıf birleştirme |
+| tailwind-merge | 3.5.0 | Tailwind sınıf birleştirme |
 | cmdk | 1.1.1 | Komut paletli arama |
 
-#### Gelistirme Bagimliliklari (8 paket)
+#### Geliştirme Bağımlılıkları (8 paket)
 
-| Paket | Versiyon | Amac |
+| Paket | Versiyon | Amaç |
 |-------|----------|------|
 | typescript | 5.x | Tip sistemi |
 | tailwindcss | 4.x | CSS framework |
 | @tailwindcss/postcss | 4.x | PostCSS entegrasyonu |
-| tw-animate-css | 1.4.0 | Animasyon kutuphanesi |
-| eslint | 9.x | Kod kalite kontrolu |
-| eslint-config-next | 16.1.6 | Next.js lint kurallari |
-| shadcn | 3.8.5 | Bilesen olusturma CLI |
-| @types/node, @types/react, @types/react-dom | Guncel | TypeScript tip tanimlari |
+| tw-animate-css | 1.4.0 | Animasyon kütüphanesi |
+| eslint | 9.x | Kod kalite kontrolü |
+| eslint-config-next | 16.1.6 | Next.js lint kuralları |
+| shadcn | 3.8.5 | Bileşen oluşturma CLI |
+| @types/node, @types/react, @types/react-dom | Güncel | TypeScript tip tanımları |
 
 ---
 
-## 4. Temel WMS Modulleri
+## 4. Temel WMS Modülleri
 
-Sistem, corap fabrikasinin gunluk depo operasyonlarini yoneten 11 temel modulden olusmaktadir. Her modul tam islevsel bir sayfa olarak uygulanmis olup, tum durumlari (yukleniyor, hata, bos, basarili) kapsar.
+Sistem, çorap fabrikasının günlük depo operasyonlarını yöneten 11 temel modülden oluşmaktadır. Her modül tam işlevsel bir sayfa olarak uygulanmış olup, tüm durumları (yükleniyor, hata, boş, başarılı) kapsar.
 
 ### 4.1 Dashboard (Ana Panel)
 
 **Dosya:** `src/app/(dashboard)/dashboard/page.tsx`
-**Satir:** 742
-**Amac:** Tum depo operasyonlarinin tek bakista izlendigi yonetim paneli
+**Satır:** 742
+**Amaç:** Tüm depo operasyonlarının tek bakışta izlendiği yönetim paneli
 
-**Ekran Elemanlari:**
-- 8 adet KPI karti (Toplam SKU, Dusuk Stok Uyarilari, Bekleyen Siparisler, Bugunun Kabulleri, Envanter Degeri, Envanter Dogrulugu, Siparis Karsilama Orani, Depo Kullanim Orani)
-- Kategorilere gore envanter dagilim grafigi (PieChart)
-- 30 gunluk hareket trendi grafigi (AreaChart - Giris/Cikis)
-- Konum kullanim oranlari grafigi (BarChart)
+**Ekran Elemanları:**
+- 8 adet KPI kartı (Toplam SKU, Düşük Stok Uyarıları, Bekleyen Siparişler, Bugünün Kabulleri, Envanter Değeri, Envanter Doğruluğu, Sipariş Karşılama Oranı, Depo Kullanım Oranı)
+- Kategorilere göre envanter dağılım grafiği (PieChart)
+- 30 günlük hareket trendi grafiği (AreaChart - Giriş/Çıkış)
+- Konum kullanım oranları grafiği (BarChart)
 - Son hareketler tablosu
-- Aktif uyarilar listesi
+- Aktif uyarılar listesi
 
-**Is Akisi:**
-1. Sayfa yuklendiginde 6 paralel server action cagrisi yapilir
-2. KPI verileri hesaplanir ve kartlara dagilir
-3. Grafikler Recharts ile canli render edilir
-4. Hareketler ve uyarilar listelenir
+**İş Akışı:**
+1. Sayfa yüklendiğinde 6 paralel server action çağrısı yapılır
+2. KPI verileri hesaplanır ve kartlara dağılır
+3. Grafikler Recharts ile canlı render edilir
+4. Hareketler ve uyarılar listelenir
 
-### 4.2 Envanter Yonetimi
+### 4.2 Envanter Yönetimi
 
 **Dosya:** `src/app/(dashboard)/inventory/page.tsx`
-**Satir:** 641
-**Amac:** Urun ve hammadde stoklarinin gercek zamanli takibi, hareket gecmisi, stok duzeltme ve transfer islemleri
+**Satır:** 641
+**Amaç:** Ürün ve hammadde stoklarının gerçek zamanlı takibi, hareket geçmişi, stok düzeltme ve transfer işlemleri
 
-**Ekran Elemanlari:**
-- Sekme yapisi: Urun Stoklari | Hammadde Stoklari | Hareket Gecmisi
-- Filtreleme: Kalite durumu (Kullanilabilir, Karantina, Reddedildi, Beklemede)
-- Stok duzeltme dialog'u (+ artirma, - azaltma, neden girisi)
+**Ekran Elemanları:**
+- Sekme yapısı: Ürün Stokları | Hammadde Stokları | Hareket Geçmişi
+- Filtreleme: Kalite durumu (Kullanılabilir, Karantina, Reddedildi, Beklemede)
+- Stok düzeltme dialog'u (+ artırma, - azaltma, neden girişi)
 - Transfer dialog'u (kaynak konum → hedef konum)
 - CSV/Excel export
 
-**Is Akisi:**
-1. Envanter verileri cekilir (urun ve hammadde ayri)
-2. Kullanici filtreleme ve arama yapar
-3. Stok duzeltme veya transfer islemi baslatilir
-4. Hareket kaydi otomatik olusturulur
+**İş Akışı:**
+1. Envanter verileri çekilir (ürün ve hammadde ayrı)
+2. Kullanıcı filtreleme ve arama yapar
+3. Stok düzeltme veya transfer işlemi başlatılır
+4. Hareket kaydı otomatik oluşturulur
 
 ### 4.3 Mal Kabul (Receiving)
 
 **Dosya:** `src/app/(dashboard)/receiving/page.tsx`
-**Satir:** 574
-**Amac:** Tedarikciden gelen mallarin sisteme girisi, satin alma siparisleriyle eslestirme, kalite kontrole yonlendirme
+**Satır:** 574
+**Amaç:** Tedarikçiden gelen malların sisteme girişi, satın alma siparişleriyle eşleştirme, kalite kontrole yönlendirme
 
-**Ekran Elemanlari:**
-- Satin alma siparisleri listesi (PO Number, Tedarikci, Durum, Tarih)
-- Mal kabul formu (Tedarikci, Referans PO, Teslim kapisi, Kalemler)
-- Kabul fishleri listesi
-- Durum gostergesi: Taslak → Gonderildi → Onaylandi → Kismi Teslim → Teslim Alindi
+**Ekran Elemanları:**
+- Satın alma siparişleri listesi (PO Number, Tedarikçi, Durum, Tarih)
+- Mal kabul formu (Tedarikçi, Referans PO, Teslim kapısı, Kalemler)
+- Kabul fişleri listesi
+- Durum göstergesi: Taslak → Gönderildi → Onaylandı → Kısmi Teslim → Teslim Alındı
 
-**Is Akisi:**
-1. Satin alma siparisi secilir
+**İş Akışı:**
+1. Satın alma siparişi seçilir
 2. Gelen mallar fiziksel olarak kontrol edilir
 3. Kabul edilen/reddedilen miktarlar girilir
-4. Lot numarasi ve konum atanir
-5. Kalite durumu belirlenir (Kullanilabilir/Karantina/Muayene Bekliyor)
+4. Lot numarası ve konum atanır
+5. Kalite durumu belirlenir (Kullanılabilir/Karantina/Muayene Bekliyor)
 
 ### 4.4 Sevkiyat (Shipping)
 
 **Dosya:** `src/app/(dashboard)/shipping/page.tsx`
-**Satir:** 559
-**Amac:** Satis siparislerinin hazirlanmasi, toplanmasi, paketlenmesi ve sevk edilmesi
+**Satır:** 559
+**Amaç:** Satış siparişlerinin hazırlanması, toplanması, paketlenmesi ve sevk edilmesi
 
-**Ekran Elemanlari:**
-- Satis siparisleri listesi (SO Number, Musteri, Durum, Oncelik)
-- Sevk durumu akisi: Taslak → Onaylandi → Toplaniyor → Toplandi → Paketleniyor → Paketlendi → Sevk Edildi → Teslim Edildi
-- Siparis olusturma formu (Musteri, Oncelik, Kalemler)
-- Oncelik etiketleri (Dusuk, Normal, Yuksek, Acil)
+**Ekran Elemanları:**
+- Satış siparişleri listesi (SO Number, Müşteri, Durum, Öncelik)
+- Sevk durumu akışı: Taslak → Onaylandı → Toplanıyor → Toplandı → Paketleniyor → Paketlendi → Sevk Edildi → Teslim Edildi
+- Sipariş oluşturma formu (Müşteri, Öncelik, Kalemler)
+- Öncelik etiketleri (Düşük, Normal, Yüksek, Acil)
 
-**Is Akisi:**
-1. Satis siparisi olusturulur veya mevcut siparis secilir
-2. Toplama listesi olusturulur
-3. Urunler konum bazinda toplanir
-4. Paketleme yapilir
-5. Sevk belgesi olusturulur
-6. Durum "Sevk Edildi" olarak guncellenir
+**İş Akışı:**
+1. Satış siparişi oluşturulur veya mevcut sipariş seçilir
+2. Toplama listesi oluşturulur
+3. Ürünler konum bazında toplanır
+4. Paketleme yapılır
+5. Sevk belgesi oluşturulur
+6. Durum "Sevk Edildi" olarak güncellenir
 
-### 4.5 Urun Yonetimi (Products)
+### 4.5 Ürün Yönetimi (Products)
 
 **Dosya:** `src/app/(dashboard)/products/page.tsx`
-**Satir:** 626
-**Amac:** Urun katalogu, model/renk/beden yonetimi, BOM (urun agaci), stok ozet gorunumu
+**Satır:** 626
+**Amaç:** Ürün kataloğu, model/renk/beden yönetimi, BOM (ürün ağacı), stok özet görünümü
 
-**Ekran Elemanlari:**
-- Sekmeler: Urunler | Stok Ozeti | Urun Agaci (BOM)
-- Urun tablosu (SKU, Model, Renk, Beden, Maliyet, Fiyat, Min/Max Stok)
-- Stok ozet tablosu (Toplam, Rezerve, Kullanilabilir, Durum)
-- BOM (Bill of Materials) tablosu (Hammadde, Duzine Bas Miktar, Fire %)
-- Urun olusturma formu
+**Ekran Elemanları:**
+- Sekmeler: Ürünler | Stok Özeti | Ürün Ağacı (BOM)
+- Ürün tablosu (SKU, Model, Renk, Beden, Maliyet, Fiyat, Min/Max Stok)
+- Stok özet tablosu (Toplam, Rezerve, Kullanılabilir, Durum)
+- BOM (Bill of Materials) tablosu (Hammadde, Düzine Baş Miktar, Fire %)
+- Ürün oluşturma formu
 
-**Corap Ozel Veri Modeli:**
-- Corap tipi: Bilek, Crew, Diz Alti, Gorunmez, Ceyrek Boy, Uzun
-- Malzeme bilesimi: Pamuk %, Polyester %, Elastan % vb.
-- Cift basi agirlik (gram)
-- Beden: EU/US/UK araliklari
+**Çorap Özel Veri Modeli:**
+- Çorap tipi: Bilek, Crew, Diz Altı, Görünmez, Çeyrek Boy, Uzun
+- Malzeme bileşimi: Pamuk %, Polyester %, Elastan % vb.
+- Çift başı ağırlık (gram)
+- Beden: EU/US/UK aralıkları
 
-### 4.6 Konum Yonetimi (Locations)
+### 4.6 Konum Yönetimi (Locations)
 
 **Dosya:** `src/app/(dashboard)/locations/page.tsx`
-**Satir:** 655
-**Amac:** Depo, zon, raf, bin hiyerarsik konum yapisi yonetimi ve kapasite takibi
+**Satır:** 655
+**Amaç:** Depo, zon, raf, bin hiyerarşik konum yapısı yönetimi ve kapasite takibi
 
-**Ekran Elemanlari:**
-- Sekmeler: Depolar | Zonlar | Konumlar | Kullanim Oranlari
-- Depo tablosu (Kod, Ad, Adres, Alan m2, Tip)
-- Zon tablosu (Depo, Zon Tipi, Sicaklik Kontrol, Alan)
-- Konum tablosu (Zon, Raf, Raf Seviyesi, Bin, Tip, Max Agirlik/Hacim, Dolu/Bos)
-- Konum kullanim grafigi (BarChart - zon bazinda %)
+**Ekran Elemanları:**
+- Sekmeler: Depolar | Zonlar | Konumlar | Kullanım Oranları
+- Depo tablosu (Kod, Ad, Adres, Alan m², Tip)
+- Zon tablosu (Depo, Zon Tipi, Sıcaklık Kontrol, Alan)
+- Konum tablosu (Zon, Raf, Raf Seviyesi, Bin, Tip, Max Ağırlık/Hacim, Dolu/Boş)
+- Konum kullanım grafiği (BarChart - zon bazında %)
 
 **Zon Tipleri:**
-- Kabul Alani, Depolama, Toplama Alani, Sevkiyat Alani, Karantina, Iade Alani
+- Kabul Alanı, Depolama, Toplama Alanı, Sevkiyat Alanı, Karantina, İade Alanı
 
 **Konum Tipleri:**
 - Bulk (toplu), Pick (toplama), Floor (zemin), Pallet (palet)
 
-### 4.7 Stok Sayimi (Stock Count)
+### 4.7 Stok Sayımı (Stock Count)
 
 **Dosya:** `src/app/(dashboard)/stock-count/page.tsx`
-**Satir:** 459
-**Amac:** Periyodik stok sayimlari, fark tespiti, mutabakat sureci
+**Satır:** 459
+**Amaç:** Periyodik stok sayımları, fark tespiti, mutabakat süreci
 
-**Ekran Elemanlari:**
-- Sayim gorevleri tablosu (Gorev No, Tip, Durum, Zon, Tarih, Atanan)
-- Sayim formu olusturma (Sayim Tipi, Zon, Planlanan Tarih)
-- Fark raporu (Sistem Miktari vs Sayilan Miktar, Varyans)
+**Ekran Elemanları:**
+- Sayım görevleri tablosu (Görev No, Tip, Durum, Zon, Tarih, Atanan)
+- Sayım formu oluşturma (Sayım Tipi, Zon, Planlanan Tarih)
+- Fark raporu (Sistem Miktarı vs Sayılan Miktar, Varyans)
 
-**Sayim Tipleri:**
-- Tam Sayim (Full): Tum depo sayilir
-- Dongusel Sayim (Cycle): Belirlenen zonlar sayilir
-- Nokta Sayim (Spot): Rastgele secilen konumlar sayilir
+**Sayım Tipleri:**
+- Tam Sayım (Full): Tüm depo sayılır
+- Döngüsel Sayım (Cycle): Belirlenen zonlar sayılır
+- Nokta Sayım (Spot): Rastgele seçilen konumlar sayılır
 
 ### 4.8 Kalite Kontrol (Quality)
 
 **Dosya:** `src/app/(dashboard)/quality/page.tsx`
-**Satir:** 506
-**Amac:** Gelen mal ve urun kalite muayenesi, kusur tipleri tanimi, muayene gecmisi
+**Satır:** 506
+**Amaç:** Gelen mal ve ürün kalite muayenesi, kusur tipleri tanımı, muayene geçmişi
 
-**Ekran Elemanlari:**
-- Muayene listesi (Muayene No, Referans, Urun/Hammadde, Sonuc, Tarih)
-- Muayene olusturma formu (Referans Tip/ID, Urun/Hammadde, Numune Boyutu, Sonuc)
-- Kusur tipleri tanimi (Kod, Ad, Siddet, Kategori)
+**Ekran Elemanları:**
+- Muayene listesi (Muayene No, Referans, Ürün/Hammadde, Sonuç, Tarih)
+- Muayene oluşturma formu (Referans Tip/ID, Ürün/Hammadde, Numune Boyutu, Sonuç)
+- Kusur tipleri tanımı (Kod, Ad, Şiddet, Kategori)
 
-**Muayene Sonuclari:** Gecti (Passed) | Kaldi (Failed) | Sartli (Conditional)
+**Muayene Sonuçları:** Geçti (Passed) | Kaldı (Failed) | Şartlı (Conditional)
 
-**Kusur Kategorileri (Corap Ozel):**
-- Orgu (Knitting), Baglama (Linking), Boyama (Dyeing), Terbiye (Finishing)
+**Kusur Kategorileri (Çorap Özel):**
+- Örgü (Knitting), Bağlama (Linking), Boyama (Dyeing), Terbiye (Finishing)
 
-**Kusur Siddetleri:** Kritik, Major, Minor
+**Kusur Şiddetleri:** Kritik, Major, Minor
 
-### 4.9 Tedarikci Yonetimi (Suppliers)
+### 4.9 Tedarikçi Yönetimi (Suppliers)
 
 **Dosya:** `src/app/(dashboard)/suppliers/page.tsx`
-**Satir:** 400
-**Amac:** Tedarikci bilgileri, performans takibi, satin alma siparisleri iliskisi
+**Satır:** 400
+**Amaç:** Tedarikçi bilgileri, performans takibi, satın alma siparişleri ilişkisi
 
-**Ekran Elemanlari:**
-- Tedarikci tablosu (Kod, Ad, Irtibat, Email, Telefon, Sehir, Odeme Sartlari)
-- Kalite puani gostergesi
-- Tedarik suresi (gun)
-- Tedarikci detay gorunumu
+**Ekran Elemanları:**
+- Tedarikçi tablosu (Kod, Ad, İrtibat, Email, Telefon, Şehir, Ödeme Şartları)
+- Kalite puanı göstergesi
+- Tedarik süresi (gün)
+- Tedarikçi detay görünümü
 
-### 4.10 Uyari Sistemi (Alerts)
+### 4.10 Uyarı Sistemi (Alerts)
 
 **Dosya:** `src/app/(dashboard)/alerts/page.tsx`
-**Satir:** 447
-**Amac:** Otomatik uyari olusturma, bildirim yonetimi, uyari kurallari
+**Satır:** 447
+**Amaç:** Otomatik uyarı oluşturma, bildirim yönetimi, uyarı kuralları
 
-**Ekran Elemanlari:**
-- Aktif uyarilar listesi (Baslik, Mesaj, Siddet, Tarih, Okundu/Cozuldu)
-- Uyari kurallari tablosu (Kural Adi, Tip, Esik Degeri, Aktif/Pasif)
-- Siddet filtreleme: Bilgi, Uyari, Kritik
+**Ekran Elemanları:**
+- Aktif uyarılar listesi (Başlık, Mesaj, Şiddet, Tarih, Okundu/Çözüldü)
+- Uyarı kuralları tablosu (Kural Adı, Tip, Eşik Değeri, Aktif/Pasif)
+- Şiddet filtreleme: Bilgi, Uyarı, Kritik
 
-**Uyari Tipleri:**
-- `low_stock`: Minimum stok seviyesi altina dusme
-- `overstock`: Maksimum stok seviyesi asimi
-- `expiring`: Son kullanma tarihi yaklasan urunler
-- `capacity`: Depo kapasite asimi
+**Uyarı Tipleri:**
+- `low_stock`: Minimum stok seviyesi altına düşme
+- `overstock`: Maksimum stok seviyesi aşımı
+- `expiring`: Son kullanma tarihi yaklaşan ürünler
+- `capacity`: Depo kapasite aşımı
 
-### 4.11 Kullanici Yonetimi (Users)
+### 4.11 Kullanıcı Yönetimi (Users)
 
 **Dosya:** `src/app/(dashboard)/users/page.tsx`
-**Satir:** 406
-**Amac:** Kullanici hesaplari, rol atamalari, erisim yetki yonetimi
+**Satır:** 406
+**Amaç:** Kullanıcı hesapları, rol atamaları, erişim yetki yönetimi
 
-**Ekran Elemanlari:**
-- Kullanici tablosu (Ad Soyad, Email, Rol, Departman, Durum, Son Giris)
-- Rol etiketleri (Turkce)
-- Aktif/Pasif durum yonetimi
+**Ekran Elemanları:**
+- Kullanıcı tablosu (Ad Soyad, Email, Rol, Departman, Durum, Son Giriş)
+- Rol etiketleri (Türkçe)
+- Aktif/Pasif durum yönetimi
 
 ---
 
-## 5. Endustri Muhendisligi Analitik Modulleri
+## 5. Endüstri Mühendisliği Analitik Modülleri
 
-Bu moduller, sistemi standart bir WMS'in otesine tasiyarak, endustri muhendisligi disiplininden alinan analitik yontemleri uygular. Her modul, gercek verileri isleyerek interaktif grafikler ve hesaplama sonuclari sunar.
+Bu modüller, sistemi standart bir WMS'in ötesine taşıyarak, endüstri mühendisliği disiplininden alınan analitik yöntemleri uygular. Her modül, gerçek verileri işleyerek interaktif grafikler ve hesaplama sonuçları sunar.
 
-### 5.1 SPC ve Alti Sigma Modulu
+### 5.1 SPC ve Altı Sigma Modülü
 
-**Dosya:** `src/app/(dashboard)/analytics/spc/page.tsx` (468 satir)
-**Hesaplama Dosyasi:** `src/lib/calculations-spc.ts` (188 satir, 9 fonksiyon)
-**Amac:** Depo surec performansinin istatistiksel kontrol grafikleri ile izlenmesi
+**Dosya:** `src/app/(dashboard)/analytics/spc/page.tsx` (468 satır)
+**Hesaplama Dosyası:** `src/lib/calculations-spc.ts` (188 satır, 9 fonksiyon)
+**Amaç:** Depo süreç performansının istatistiksel kontrol grafikleri ile izlenmesi
 
-#### Fonksiyonlar ve Formuller
+#### Fonksiyonlar ve Formüller
 
-| # | Fonksiyon | Formul | Aciklama |
+| # | Fonksiyon | Formül | Açıklama |
 |---|-----------|--------|----------|
 | 1 | `calculateXbarRLimits` | UCL = X̄ + A₂R̄, LCL = X̄ - A₂R̄ | X-bar/R kontrol limitleri |
 | 2 | `calculateIMRLimits` | UCL = X̄ + 3(MR̄/d₂), LCL = X̄ - 3(MR̄/d₂) | I-MR (bireysel) kontrol limitleri |
-| 3 | `calculateCp` | Cp = (USL - LSL) / (6σ) | Surec yeterliligi |
-| 4 | `calculateCpk` | Cpk = min((USL-μ)/3σ, (μ-LSL)/3σ) | Surec yeterlilik indeksi |
-| 5 | `calculateCapability` | Cp + Cpk birlesik hesaplama | Tam yeterlilik analizi |
-| 6 | `detectOutOfControl` | Nelson Rule 1: x > UCL veya x < LCL | Kontrol disi nokta tespiti |
-| 7 | `normalPDF` | f(x) = (1/σ√2π) × e^(-(x-μ)²/2σ²) | Normal dagilim yogunluk |
-| 8 | `generateNormalCurve` | 100 noktada normal egri | Grafik veri olusturma |
+| 3 | `calculateCp` | Cp = (USL - LSL) / (6σ) | Süreç yeterliliği |
+| 4 | `calculateCpk` | Cpk = min((USL-μ)/3σ, (μ-LSL)/3σ) | Süreç yeterlilik indeksi |
+| 5 | `calculateCapability` | Cp + Cpk birleşik hesaplama | Tam yeterlilik analizi |
+| 6 | `detectOutOfControl` | Nelson Rule 1: x > UCL veya x < LCL | Kontrol dışı nokta tespiti |
+| 7 | `normalPDF` | f(x) = (1/σ√2π) × e^(-(x-μ)²/2σ²) | Normal dağılım yoğunluk |
+| 8 | `generateNormalCurve` | 100 noktada normal eğri | Grafik veri oluşturma |
 | 9 | `SPC_CONSTANTS` | A₂, D₃, D₄, d₂ (n=2..10) | SPC sabit tablosu |
 
-**SPC Sabit Tablosu (Alt Grup Boyutuna Gore):**
+**SPC Sabit Tablosu (Alt Grup Boyutuna Göre):**
 
 | n | A₂ | D₃ | D₄ | d₂ |
 |---|-----|-----|-----|-----|
@@ -473,76 +473,76 @@ Bu moduller, sistemi standart bir WMS'in otesine tasiyarak, endustri muhendislig
 | 9 | 0.337 | 0.184 | 1.816 | 2.970 |
 | 10 | 0.308 | 0.223 | 1.777 | 3.078 |
 
-**Grafik Cesitleri:**
-- X-bar kontrol grafigi (LineChart + referans cizgiler UCL/CL/LCL)
-- R kontrol grafigi (LineChart)
-- I-MR kontrol grafigi (LineChart)
-- Normal dagilim egrisi (AreaChart)
-- Surec yeterlilik gostergesi
+**Grafik Çeşitleri:**
+- X-bar kontrol grafiği (LineChart + referans çizgiler UCL/CL/LCL)
+- R kontrol grafiği (LineChart)
+- I-MR kontrol grafiği (LineChart)
+- Normal dağılım eğrisi (AreaChart)
+- Süreç yeterlilik göstergesi
 
-**Olculen Metrikler:**
-- Toplama Dogrulugu (Picking Accuracy)
-- Envanter Dogrulugu (Inventory Accuracy)
-- Siparis Dongu Suresi (Order Cycle Time)
+**Ölçülen Metrikler:**
+- Toplama Doğruluğu (Picking Accuracy)
+- Envanter Doğruluğu (Inventory Accuracy)
+- Sipariş Döngü Süresi (Order Cycle Time)
 
 **Akademik Referans:** Montgomery, D.C. (2019). Introduction to Statistical Quality Control. Wiley.
 
 ---
 
-### 5.2 EOQ, ABC ve Talep Tahmini Modulu
+### 5.2 EOQ, ABC ve Talep Tahmini Modülü
 
-**Dosya:** `src/app/(dashboard)/analytics/forecasting/page.tsx` (468 satir)
-**Hesaplama Dosyalari:**
-- `src/lib/calculations.ts` (281 satir, 12 fonksiyon)
-- `src/lib/calculations-forecast.ts` (127 satir, 2 fonksiyon)
+**Dosya:** `src/app/(dashboard)/analytics/forecasting/page.tsx` (468 satır)
+**Hesaplama Dosyaları:**
+- `src/lib/calculations.ts` (281 satır, 12 fonksiyon)
+- `src/lib/calculations-forecast.ts` (127 satır, 2 fonksiyon)
 
-**Amac:** Envanter optimizasyonu, ABC siniflandirmasi ve talep tahmini
+**Amaç:** Envanter optimizasyonu, ABC sınıflandırması ve talep tahmini
 
-#### Fonksiyonlar ve Formuller
+#### Fonksiyonlar ve Formüller
 
-| # | Fonksiyon | Formul | Aciklama |
+| # | Fonksiyon | Formül | Açıklama |
 |---|-----------|--------|----------|
-| 1 | `calculateEOQ` | EOQ = √(2DS/H) | Ekonomik Siparis Miktari |
-| 2 | `calculateSafetyStock` | SS = Z × √(LT×σ²d + d̄²×σ²LT) | Guvenlik Stogu |
-| 3 | `calculateReorderPoint` | ROP = d̄ × LT + SS | Yeniden Siparis Noktasi |
-| 4 | `calculateABCClassification` | Pareto siralamasina gore A/B/C siniflandirma | ABC Analizi |
-| 5 | `getABCSummary` | Sinif bazinda ozet istatistik | ABC Ozet |
-| 6 | `calculateInventoryTurnover` | Devir = COGS / Ort. Envanter | Stok Devir Hizi |
-| 7 | `exponentialSmoothing` | F(t+1) = α×D(t) + (1-α)×F(t) | Basit Ussel Duzlestirme (SES) |
-| 8 | `calculateFloorUtilization` | % = (Depolama Alani / Toplam Alan) × 100 | Zemin Kullanim Orani |
-| 9 | `calculateVolumeUtilization` | % = (Envanter Hacmi / Toplam Hacim) × 100 | Hacim Kullanim Orani |
-| 10 | `calculateDPMO` | DPMO = (Kusur / Firsat) × 1.000.000 | Milyonda Hata |
-| 11 | `calculateCarryingCost` | Yillik = Envanter Degeri × Tasima % | Stok Tasima Maliyeti |
-| 12 | `monteCarloSafetyStock` | Box-Muller + N simulasyon | Monte Carlo Simulasyonu |
-| 13 | `holtSmoothing` | L(t)=α×Y(t)+(1-α)×(L(t-1)+T(t-1)) | Holt Cift Ussel Duzlestirme |
+| 1 | `calculateEOQ` | EOQ = √(2DS/H) | Ekonomik Sipariş Miktarı |
+| 2 | `calculateSafetyStock` | SS = Z × √(LT×σ²d + d̄²×σ²LT) | Güvenlik Stoğu |
+| 3 | `calculateReorderPoint` | ROP = d̄ × LT + SS | Yeniden Sipariş Noktası |
+| 4 | `calculateABCClassification` | Pareto sıralamasına göre A/B/C sınıflandırma | ABC Analizi |
+| 5 | `getABCSummary` | Sınıf bazında özet istatistik | ABC Özet |
+| 6 | `calculateInventoryTurnover` | Devir = COGS / Ort. Envanter | Stok Devir Hızı |
+| 7 | `exponentialSmoothing` | F(t+1) = α×D(t) + (1-α)×F(t) | Basit Üssel Düzleştirme (SES) |
+| 8 | `calculateFloorUtilization` | % = (Depolama Alanı / Toplam Alan) × 100 | Zemin Kullanım Oranı |
+| 9 | `calculateVolumeUtilization` | % = (Envanter Hacmi / Toplam Hacim) × 100 | Hacim Kullanım Oranı |
+| 10 | `calculateDPMO` | DPMO = (Kusur / Fırsat) × 1.000.000 | Milyonda Hata |
+| 11 | `calculateCarryingCost` | Yıllık = Envanter Değeri × Taşıma % | Stok Taşıma Maliyeti |
+| 12 | `monteCarloSafetyStock` | Box-Muller + N simülasyon | Monte Carlo Simülasyonu |
+| 13 | `holtSmoothing` | L(t)=α×Y(t)+(1-α)×(L(t-1)+T(t-1)) | Holt Çift Üssel Düzleştirme |
 
-**EOQ Detayli Ciktilari:**
-- Ekonomik siparis miktari (adet)
-- Yilda siparis sayisi
-- Siparisler arasi gun
+**EOQ Detaylı Çıktıları:**
+- Ekonomik sipariş miktarı (adet)
+- Yılda sipariş sayısı
+- Siparişler arası gün
 - Toplam maliyet (TL)
 
-**ABC Siniflandirma Esikleri:**
-- A Sinifi: Kumulatif deger %0-80 (Az kalem, yuksek deger)
-- B Sinifi: Kumulatif deger %80-95 (Orta kalem, orta deger)
-- C Sinifi: Kumulatif deger %95-100 (Cok kalem, dusuk deger)
+**ABC Sınıflandırma Eşikleri:**
+- A Sınıfı: Kümülatif değer %0-80 (Az kalem, yüksek değer)
+- B Sınıfı: Kümülatif değer %80-95 (Orta kalem, orta değer)
+- C Sınıfı: Kümülatif değer %95-100 (Çok kalem, düşük değer)
 
-**Monte Carlo Simulasyonu Detaylari:**
-- 10.000 iterasyon (varsayilan)
-- Box-Muller transformasyonu ile normal dagilim rastgele sayi uretimi
-- Talep ve tedarik suresi icin stokastik modelleme
-- Cikti: %95 ve %99 persantil guvenlik stogu onerileri
-- Histogram grafigi (BarChart, 30 bin)
+**Monte Carlo Simülasyonu Detayları:**
+- 10.000 iterasyon (varsayılan)
+- Box-Muller transformasyonu ile normal dağılım rastgele sayı üretimi
+- Talep ve tedarik süresi için stokastik modelleme
+- Çıktı: %95 ve %99 persantil güvenlik stoğu önerileri
+- Histogram grafiği (BarChart, 30 bin)
 
-**Holt Cift Ussel Duzlestirme:**
-- Seviye (Level) ve Trend bileseni ayri izlenir
-- alpha = 0.3, beta = 0.1 varsayilan parametreler
-- Birden fazla donem ileriye tahmin (F(t+m) = L(t) + m×T(t))
+**Holt Çift Üssel Düzleştirme:**
+- Seviye (Level) ve Trend bileşeni ayrı izlenir
+- alpha = 0.3, beta = 0.1 varsayılan parametreler
+- Birden fazla dönem ileriye tahmin (F(t+m) = L(t) + m×T(t))
 - MAE ve MAPE hata metrikleri
 
-**Servis Seviyesi Z-Degerleri:**
+**Servis Seviyesi Z-Değerleri:**
 
-| Servis Seviyesi | Z-Degeri |
+| Servis Seviyesi | Z-Değeri |
 |-----------------|----------|
 | %90 | 1.28 |
 | %95 | 1.65 |
@@ -551,131 +551,131 @@ Bu moduller, sistemi standart bir WMS'in otesine tasiyarak, endustri muhendislig
 | %99.5 | 2.58 |
 | %99.9 | 3.09 |
 
-**Grafik Cesitleri:**
-- EOQ maliyet grafigi (ComposedChart)
-- ABC Pareto grafigi (ComposedChart - BarChart + LineChart)
-- Talep tahmin grafigi (LineChart - Gerceklesen vs Tahmin)
+**Grafik Çeşitleri:**
+- EOQ maliyet grafiği (ComposedChart)
+- ABC Pareto grafiği (ComposedChart - BarChart + LineChart)
+- Talep tahmin grafiği (LineChart - Gerçekleşen vs Tahmin)
 - Monte Carlo histogram (BarChart)
 
 **Akademik Referanslar:**
 - Harris, F.W. (1913). "How Many Parts to Make at Once" - EOQ modeli
-- Holt, C.C. (1957). "Forecasting Seasonals and Trends" - Cift ussel duzlestirme
-- Metropolis, N. & Ulam, S. (1949). Monte Carlo yontemi
+- Holt, C.C. (1957). "Forecasting Seasonals and Trends" - Çift üssel düzleştirme
+- Metropolis, N. & Ulam, S. (1949). Monte Carlo yöntemi
 
 ---
 
-### 5.3 VSM ve Yalin Uretim Modulu
+### 5.3 VSM ve Yalın Üretim Modülü
 
-**Dosya:** `src/app/(dashboard)/analytics/lean/page.tsx` (404 satir)
-**Hesaplama Dosyasi:** `src/lib/calculations-lean.ts` (113 satir, 5 fonksiyon)
-**Amac:** Deger Akis Haritalama, Takt suresi, 5S denetim takibi, MUDA israf analizi
+**Dosya:** `src/app/(dashboard)/analytics/lean/page.tsx` (404 satır)
+**Hesaplama Dosyası:** `src/lib/calculations-lean.ts` (113 satır, 5 fonksiyon)
+**Amaç:** Değer Akış Haritalama, Takt süresi, 5S denetim takibi, MUDA israf analizi
 
-#### Fonksiyonlar ve Formuller
+#### Fonksiyonlar ve Formüller
 
-| # | Fonksiyon | Formul | Aciklama |
+| # | Fonksiyon | Formül | Açıklama |
 |---|-----------|--------|----------|
-| 1 | `calculateTaktTime` | Takt = Kullanilabilir Sure / Gunluk Talep | Musteri talebi bazli uretim hizi |
-| 2 | `calculateLeadTime` | LT = Σ(CT + WT), VA%, NVA% | Toplam tedarik suresi analizi |
-| 3 | `calculateProcessEfficiency` | PCE = (Deger Katan Sure / Toplam LT) × 100 | Surec dongu verimliligi |
-| 4 | `calculate5STrend` | Bolge bazinda 5S puan trendi | 5S denetim takibi |
-| 5 | `calculateVSMSummary` | LT + Operator + WIP + Darbogazlar | VSM ozet istatistikleri |
+| 1 | `calculateTaktTime` | Takt = Kullanılabilir Süre / Günlük Talep | Müşteri talebi bazlı üretim hızı |
+| 2 | `calculateLeadTime` | LT = Σ(CT + WT), VA%, NVA% | Toplam tedarik süresi analizi |
+| 3 | `calculateProcessEfficiency` | PCE = (Değer Katan Süre / Toplam LT) × 100 | Süreç döngü verimliliği |
+| 4 | `calculate5STrend` | Bölge bazında 5S puan trendi | 5S denetim takibi |
+| 5 | `calculateVSMSummary` | LT + Operatör + WIP + Darboğazlar | VSM özet istatistikleri |
 
-**VSM (Deger Akis Haritasi) Adim Verileri:**
-- Surec adi, Dongu suresi (dk), Bekleme suresi (dk)
-- Deger katan oran (%), Operator sayisi, WIP (aradaki stok)
-- Darbogazlarin otomatik tespiti (en yuksek dongu suresi)
+**VSM (Değer Akış Haritası) Adım Verileri:**
+- Süreç adı, Döngü süresi (dk), Bekleme süresi (dk)
+- Değer katan oran (%), Operatör sayısı, WIP (aradaki stok)
+- Darboğazların otomatik tespiti (en yüksek döngü süresi)
 
-**5S Denetim Kategorileri (Turkce):**
+**5S Denetim Kategorileri (Türkçe):**
 
-| Japonca | Turkce | Ingilizce |
+| Japonca | Türkçe | İngilizce |
 |---------|--------|-----------|
-| Seiri | Ayiklama | Sort |
-| Seiton | Duzenleme | Set in Order |
+| Seiri | Ayıklama | Sort |
+| Seiton | Düzenleme | Set in Order |
 | Seiso | Temizlik | Shine |
-| Seiketsu | Standartlastirma | Standardize |
+| Seiketsu | Standartlaştırma | Standardize |
 | Shitsuke | Disiplin | Sustain |
 
-**MUDA (7 Israf) Kategorileri:**
+**MUDA (7 İsraf) Kategorileri:**
 
-| Israf Tipi (EN) | Turkce Karsiligi |
+| İsraf Tipi (EN) | Türkçe Karşılığı |
 |-----------------|------------------|
-| Transport | Tasima |
+| Transport | Taşıma |
 | Inventory | Fazla Stok |
 | Motion | Gereksiz Hareket |
 | Waiting | Bekleme |
-| Overproduction | Fazla Uretim |
-| Overprocessing | Gereksiz Islem |
+| Overproduction | Fazla Üretim |
+| Overprocessing | Gereksiz İşlem |
 | Defects | Kusurlar |
 
-Her israf kategorisi icin:
-- Mevcut puan (1-10 olcegi)
+Her israf kategorisi için:
+- Mevcut puan (1-10 ölçeği)
 - Hedef puan
-- Aciklama
-- Iyilestirme onerisi
+- Açıklama
+- İyileştirme önerisi
 
-**Grafik Cesitleri:**
-- VSM adim grafigi (BarChart - Dongu Suresi vs Bekleme Suresi)
-- 5S trend grafigi (LineChart - 5 kategori)
-- Kanban tahtasi (surukle-birak)
-- MUDA radar grafigi (RadarChart)
+**Grafik Çeşitleri:**
+- VSM adım grafiği (BarChart - Döngü Süresi vs Bekleme Süresi)
+- 5S trend grafiği (LineChart - 5 kategori)
+- Kanban tahtası (sürükle-bırak)
+- MUDA radar grafiği (RadarChart)
 
 **Akademik Referanslar:**
-- Womack, J.P. & Jones, D.T. (2003). Lean Thinking - Yalin dusunce
+- Womack, J.P. & Jones, D.T. (2003). Lean Thinking - Yalın düşünce
 - Rother, M. & Shook, J. (2003). Learning to See - VSM
 - Hirano, H. (1995). 5 Pillars of the Visual Workplace - 5S
 
 ---
 
-### 5.4 Once/Sonra Karsilastirma Analizi Modulu
+### 5.4 Önce/Sonra Karşılaştırma Analizi Modülü
 
-**Dosya:** `src/app/(dashboard)/analytics/comparison/page.tsx` (449 satir)
-**Hesaplama Dosyasi:** `src/lib/calculations-statistics.ts` (204 satir, 6 fonksiyon)
-**Amac:** WMS uygulamasi oncesi ve sonrasi operasyonel metriklerin istatistiksel karsilastirilmasi
+**Dosya:** `src/app/(dashboard)/analytics/comparison/page.tsx` (449 satır)
+**Hesaplama Dosyası:** `src/lib/calculations-statistics.ts` (204 satır, 6 fonksiyon)
+**Amaç:** WMS uygulaması öncesi ve sonrası operasyonel metriklerin istatistiksel karşılaştırılması
 
-#### Fonksiyonlar ve Formuller
+#### Fonksiyonlar ve Formüller
 
-| # | Fonksiyon | Formul | Aciklama |
+| # | Fonksiyon | Formül | Açıklama |
 |---|-----------|--------|----------|
 | 1 | `descriptiveStats` | x̄, medyan, σ, s², min, max, n | Betimleyici istatistikler |
-| 2 | `pairedTTest` | t = d̄ / (s_d / √n) | Eslestirilmis t-testi |
-| 3 | `tDistributionPValue` | Hill (1970) yaklasimi | t-dagilimi p-degeri |
-| 4 | `normalCDF` | Abramowitz & Stegun yaklasimi | Normal kumulatif dagilim |
-| 5 | `incompleteBeta` | Continued fraction yaklasimi | Eksik Beta fonksiyonu |
-| 6 | `linearRegression` | y = mx + b (En Kucuk Kareler) | Dogrusal regresyon |
+| 2 | `pairedTTest` | t = d̄ / (s_d / √n) | Eşleştirilmiş t-testi |
+| 3 | `tDistributionPValue` | Hill (1970) yaklaşımı | t-dağılımı p-değeri |
+| 4 | `normalCDF` | Abramowitz & Stegun yaklaşımı | Normal kümülatif dağılım |
+| 5 | `incompleteBeta` | Continued fraction yaklaşımı | Eksik Beta fonksiyonu |
+| 6 | `linearRegression` | y = mx + b (En Küçük Kareler) | Doğrusal regresyon |
 
-**Eslestirilmis t-Testi Detaylari:**
+**Eşleştirilmiş t-Testi Detayları:**
 
 Hipotez testi:
-- H₀: μ_d = 0 (WMS oncesi ve sonrasi arasinda anlamli fark yoktur)
-- H₁: μ_d ≠ 0 (Anlamli fark vardir)
-- alpha = 0.05 (varsayilan guven duzeyi)
-- Cift kuyruklu test
+- H₀: μ_d = 0 (WMS öncesi ve sonrası arasında anlamlı fark yoktur)
+- H₁: μ_d ≠ 0 (Anlamlı fark vardır)
+- alpha = 0.05 (varsayılan güven düzeyi)
+- Çift kuyruklu test
 
-Hesaplama adimlari:
+Hesaplama adımları:
 1. Farklar dizisi: d_i = after_i - before_i
-2. Fark ortalamasi: d̄ = Σd_i / n
+2. Fark ortalaması: d̄ = Σd_i / n
 3. Fark varyans: s² = Σ(d_i - d̄)² / (n-1)
 4. Standart hata: SE = √(s²/n)
-5. t-degeri: t = d̄ / SE
+5. t-değeri: t = d̄ / SE
 6. Serbestlik derecesi: df = n - 1
-7. p-degeri: tDistributionPValue(|t|, df)
-8. Karar: p < alpha ise H₀ reddedilir (anlamli fark var)
+7. p-değeri: tDistributionPValue(|t|, df)
+8. Karar: p < alpha ise H₀ reddedilir (anlamlı fark var)
 
-**Dogrusal Regresyon Detaylari:**
-- En Kucuk Kareler (OLS) yontemi
-- Egim: m = (nΣxy - ΣxΣy) / (nΣx² - (Σx)²)
+**Doğrusal Regresyon Detayları:**
+- En Küçük Kareler (OLS) yöntemi
+- Eğim: m = (nΣxy - ΣxΣy) / (nΣx² - (Σx)²)
 - Kesim: b = (Σy - mΣx) / n
-- R² (belirlilik katsayisi): 1 - SS_res/SS_tot
+- R² (belirlilik katsayısı): 1 - SS_res/SS_tot
 
-**Normal CDF Yaklasimi:**
-Abramowitz & Stegun (1964) polinomial yaklasimi:
+**Normal CDF Yaklaşımı:**
+Abramowitz & Stegun (1964) polinomial yaklaşımı:
 - a₁ = 0.254829592, a₂ = -0.284496736, a₃ = 1.421413741
 - a₄ = -1.453152027, a₅ = 1.061405429, p = 0.3275911
 
-**Grafik Cesitleri:**
-- Grup karsilastirma grafigi (BarChart - Once vs Sonra)
-- Scatter plot + regresyon cizgisi (ScatterChart)
-- Iyilesme % grafigi (BarChart)
+**Grafik Çeşitleri:**
+- Grup karşılaştırma grafiği (BarChart - Önce vs Sonra)
+- Scatter plot + regresyon çizgisi (ScatterChart)
+- İyileşme % grafiği (BarChart)
 
 **Akademik Referanslar:**
 - Student (Gosset, W.S.) (1908). "The Probable Error of a Mean" - t-testi
@@ -684,21 +684,21 @@ Abramowitz & Stegun (1964) polinomial yaklasimi:
 
 ---
 
-## 6. Hesaplama Kutuphaneleri - Tam Fonksiyon Katalogu
+## 6. Hesaplama Kütüphaneleri - Tam Fonksiyon Kataloğu
 
-Proje genelinde 5 hesaplama dosyasinda toplam 33 export fonksiyon yer almaktadir. Her fonksiyon saf (pure) fonksiyon olarak yazilmis olup, yan etkisi yoktur.
+Proje genelinde 5 hesaplama dosyasında toplam 33 export fonksiyon yer almaktadır. Her fonksiyon saf (pure) fonksiyon olarak yazılmış olup, yan etkisi yoktur.
 
-### 6.1 calculations.ts (281 satir, 12 fonksiyon)
+### 6.1 calculations.ts (281 satır, 12 fonksiyon)
 
-**Kapsam:** Envanter optimizasyonu, siniflandirma, kullanim orani
+**Kapsam:** Envanter optimizasyonu, sınıflandırma, kullanım oranı
 
-| # | Fonksiyon | Imza | Satir | Kullanan Sayfa |
+| # | Fonksiyon | İmza | Satır | Kullanan Sayfa |
 |---|-----------|------|-------|----------------|
 | 1 | `calculateEOQ` | `(annualDemand, orderingCost, holdingCost) → {eoq, ordersPerYear, daysBetweenOrders, totalCost}` | 10-31 | Forecasting |
 | 2 | `calculateSafetyStock` | `(serviceLevelZ, avgLeadTimeDays, demandStdDev, avgDailyDemand, leadTimeStdDev) → number` | 37-54 | Forecasting |
 | 3 | `calculateReorderPoint` | `(avgDailyDemand, leadTimeDays, safetyStock) → number` | 60-66 | Forecasting |
 | 4 | `calculateABCClassification` | `(items[], aThreshold, bThreshold) → ABCResult[]` | 100-136 | Forecasting |
-| 5 | `getABCSummary` | `(results[]) → {A, B, C} ozet` | 138-165 | Forecasting |
+| 5 | `getABCSummary` | `(results[]) → {A, B, C} özet` | 138-165 | Forecasting |
 | 6 | `calculateInventoryTurnover` | `(cogs, averageInventoryValue) → {turnover, daysOnHand}` | 170-183 | Dashboard |
 | 7 | `exponentialSmoothing` | `(historicalDemand[], alpha) → {forecast[], nextPeriod, mae, mape}` | 189-223 | Forecasting |
 | 8 | `calculateFloorUtilization` | `(storageArea, totalArea) → number` | 228-234 | Locations |
@@ -706,11 +706,11 @@ Proje genelinde 5 hesaplama dosyasinda toplam 33 export fonksiyon yer almaktadir
 | 10 | `calculateDPMO` | `(defects, opportunities) → {dpmo, sigmaLevel, accuracy}` | 247-266 | SPC, Dashboard |
 | 11 | `calculateCarryingCost` | `(inventoryValue, carryingCostPercentage) → {annual, monthly, daily}` | 271-281 | Reports |
 
-### 6.2 calculations-spc.ts (188 satir, 9 fonksiyon)
+### 6.2 calculations-spc.ts (188 satır, 9 fonksiyon)
 
-**Kapsam:** Istatistiksel surec kontrolu
+**Kapsam:** İstatistiksel süreç kontrolü
 
-| # | Fonksiyon | Imza | Satir | Kullanan Sayfa |
+| # | Fonksiyon | İmza | Satır | Kullanan Sayfa |
 |---|-----------|------|-------|----------------|
 | 12 | `calculateXbarRLimits` | `(subgroups[]) → XbarRResult` | 25-61 | SPC |
 | 13 | `calculateIMRLimits` | `(individuals[]) → IMRResult` | 66-104 | SPC |
@@ -721,32 +721,32 @@ Proje genelinde 5 hesaplama dosyasinda toplam 33 export fonksiyon yer almaktadir
 | 18 | `normalPDF` | `(x, mean, stdDev) → number` | 162-166 | SPC |
 | 19 | `generateNormalCurve` | `(mean, stdDev, points) → {x,y}[]` | 171-188 | SPC |
 
-### 6.3 calculations-forecast.ts (127 satir, 2 fonksiyon)
+### 6.3 calculations-forecast.ts (127 satır, 2 fonksiyon)
 
-**Kapsam:** Ileri talep tahmini ve simulasyon
+**Kapsam:** İleri talep tahmini ve simülasyon
 
-| # | Fonksiyon | Imza | Satir | Kullanan Sayfa |
+| # | Fonksiyon | İmza | Satır | Kullanan Sayfa |
 |---|-----------|------|-------|----------------|
 | 20 | `monteCarloSafetyStock` | `(avgDemand, demandStdDev, avgLeadTime, leadTimeStdDev, iterations) → MonteCarloResult` | 16-74 | Forecasting |
 | 21 | `holtSmoothing` | `(data[], alpha, beta, periodsAhead) → HoltSmoothingResult` | 82-127 | Forecasting |
 
-### 6.4 calculations-lean.ts (113 satir, 5 fonksiyon)
+### 6.4 calculations-lean.ts (113 satır, 5 fonksiyon)
 
-**Kapsam:** Yalin uretim ve deger akis analizi
+**Kapsam:** Yalın üretim ve değer akış analizi
 
-| # | Fonksiyon | Imza | Satir | Kullanan Sayfa |
+| # | Fonksiyon | İmza | Satır | Kullanan Sayfa |
 |---|-----------|------|-------|----------------|
 | 22 | `calculateTaktTime` | `(availableMinutesPerDay, dailyDemand) → {taktTimeMinutes, taktTimeSeconds}` | 14-25 | Lean |
 | 23 | `calculateLeadTime` | `(steps[]) → {totalCycleTime, totalWaitTime, ...6 metrik}` | 30-62 | Lean |
 | 24 | `calculateProcessEfficiency` | `(valueAddedTime, totalLeadTime) → number` | 67-73 | Lean |
 | 25 | `calculate5STrend` | `(audits[], area) → trend[]` | 78-94 | Lean |
-| 26 | `calculateVSMSummary` | `(steps[]) → ozet istatistikler` | 99-113 | Lean |
+| 26 | `calculateVSMSummary` | `(steps[]) → özet istatistikler` | 99-113 | Lean |
 
-### 6.5 calculations-statistics.ts (204 satir, 6 fonksiyon)
+### 6.5 calculations-statistics.ts (204 satır, 6 fonksiyon)
 
-**Kapsam:** Istatistiksel test ve regresyon
+**Kapsam:** İstatistiksel test ve regresyon
 
-| # | Fonksiyon | Imza | Satir | Kullanan Sayfa |
+| # | Fonksiyon | İmza | Satır | Kullanan Sayfa |
 |---|-----------|------|-------|----------------|
 | 27 | `descriptiveStats` | `(values[]) → DescriptiveStatsResult` | 11-34 | Comparison |
 | 28 | `pairedTTest` | `(before[], after[], alpha) → TTestResult` | 41-75 | Comparison |
@@ -755,42 +755,42 @@ Proje genelinde 5 hesaplama dosyasinda toplam 33 export fonksiyon yer almaktadir
 | 31 | `incompleteBeta` | `(x, a, b) → number` | 122-140 | Comparison (dahili) |
 | 32 | `linearRegression` | `(xValues[], yValues[]) → RegressionResult` | 146-204 | Comparison |
 
-### 6.6 Ek: Formatlama ve Yardimci Fonksiyonlar
+### 6.6 Ek: Formatlama ve Yardımcı Fonksiyonlar
 
-`src/lib/formatters.ts` (54 satir, 9 fonksiyon):
+`src/lib/formatters.ts` (54 satır, 9 fonksiyon):
 
-| # | Fonksiyon | Amac |
+| # | Fonksiyon | Amaç |
 |---|-----------|------|
 | F1 | `formatCurrency` | Para birimi formatlama (TL) |
-| F2 | `formatNumber` | Sayi formatlama (bin ayirici) |
-| F3 | `formatDecimal` | Ondalik formatlama |
-| F4 | `formatPercent` | Yuzde formatlama |
+| F2 | `formatNumber` | Sayı formatlama (bin ayırıcı) |
+| F3 | `formatDecimal` | Ondalık formatlama |
+| F4 | `formatPercent` | Yüzde formatlama |
 | F5 | `formatDate` | Tarih formatlama (tr-TR) |
 | F6 | `formatDateTime` | Tarih-saat formatlama |
-| F7 | `formatTimeAgo` | Gecen sure formatlama |
-| F8 | `formatWeight` | Agirlik formatlama (g/kg) |
+| F7 | `formatTimeAgo` | Geçen süre formatlama |
+| F8 | `formatWeight` | Ağırlık formatlama (g/kg) |
 | F9 | `formatQuantityWithUnit` | Miktar + birim formatlama |
 
 ---
 
 ## 7. Yetkilendirme Sistemi (RBAC)
 
-Sistem, Rol Tabanli Erisim Kontrolu (Role-Based Access Control) mekanizmasi kullanir. 6 farkli kullanici rolu tanimlanmis olup, her rolun 13 modul uzerindeki erisim yetkileri bir matris ile tanimlidir.
+Sistem, Rol Tabanlı Erişim Kontrolü (Role-Based Access Control) mekanizması kullanır. 6 farklı kullanıcı rolü tanımlanmış olup, her rolün 13 modül üzerindeki erişim yetkileri bir matris ile tanımlıdır.
 
-### 7.1 Rol Tanimlari
+### 7.1 Rol Tanımları
 
-| Rol (EN) | Rol (TR) | Aciklama |
+| Rol (EN) | Rol (TR) | Açıklama |
 |----------|----------|----------|
-| `admin` | Yonetici | Tam yetki, tum modullere erisim |
-| `warehouse_manager` | Depo Muduru | Operasyonel moduller + raporlama |
-| `operator_receiving` | Kabul Operatoru | Mal kabul odakli, sinirli erisim |
-| `operator_shipping` | Sevkiyat Operatoru | Sevkiyat odakli, sinirli erisim |
-| `quality_control` | Kalite Kontrol | Kalite modulu odakli |
-| `viewer` | Izleyici | Salt okunur erisim + rapor export |
+| `admin` | Yönetici | Tam yetki, tüm modüllere erişim |
+| `warehouse_manager` | Depo Müdürü | Operasyonel modüller + raporlama |
+| `operator_receiving` | Kabul Operatörü | Mal kabul odaklı, sınırlı erişim |
+| `operator_shipping` | Sevkiyat Operatörü | Sevkiyat odaklı, sınırlı erişim |
+| `quality_control` | Kalite Kontrol | Kalite modülü odaklı |
+| `viewer` | İzleyici | Salt okunur erişim + rapor export |
 
-### 7.2 Izin Matrisi (13 Modul x 4 Eylem)
+### 7.2 İzin Matrisi (13 Modül x 4 Eylem)
 
-| Modul | Admin | Depo Muduru | Kabul Op. | Sevkiyat Op. | Kalite | Izleyici |
+| Modül | Admin | Depo Müdürü | Kabul Op. | Sevkiyat Op. | Kalite | İzleyici |
 |-------|-------|-------------|-----------|--------------|--------|----------|
 | Dashboard | V,E | V,E | V | V | V | V |
 | Products | V,C,E,D | V,C,E | V | V | V | V |
@@ -806,12 +806,12 @@ Sistem, Rol Tabanli Erisim Kontrolu (Role-Based Access Control) mekanizmasi kull
 | Alerts | V,C,E,D | V,E | V | V | V | V |
 | Settings | V,E | V | - | - | - | - |
 
-**Kisaltmalar:** V=View, C=Create, E=Edit, D=Delete, X=Export, -=Erisim Yok
+**Kısaltmalar:** V=View, C=Create, E=Edit, D=Delete, X=Export, -=Erişim Yok
 
 ### 7.3 Yetki Kontrol Fonksiyonu
 
 ```typescript
-// src/lib/constants.ts - Satir 238-244
+// src/lib/constants.ts - Satır 238-244
 export function hasPermission(
   role: UserRole,
   module: string,
@@ -821,50 +821,50 @@ export function hasPermission(
 }
 ```
 
-Bu fonksiyon her sayfa yuklendiginde ve her islem oncesinde cagrilarak yetkisiz erisimi engeller.
+Bu fonksiyon her sayfa yüklendiğinde ve her işlem öncesinde çağrılarak yetkisiz erişimi engeller.
 
 ---
 
 ## 8. Veri Modeli
 
-Proje, TypeScript'in tip sistemini kullanarak veritabani semasininin tam bir tip haritasini icerir. Bu sayede tum veri akislari derleme zamaninda dogrulanir.
+Proje, TypeScript'in tip sistemini kullanarak veritabanı şemasının tam bir tip haritasını içerir. Bu sayede tüm veri akışları derleme zamanında doğrulanır.
 
-### 8.1 Entity Tipleri (database.ts - 565 satir)
+### 8.1 Entity Tipleri (database.ts - 565 satır)
 
-| # | Tip Adi | Amac | Ozellik Sayisi |
+| # | Tip Adı | Amaç | Özellik Sayısı |
 |---|---------|------|----------------|
-| 1 | `ProductCategory` | Urun kategorisi | 6 |
-| 2 | `ProductModel` | Urun modeli | 11 |
-| 3 | `ProductColor` | Urun rengi | 5 |
-| 4 | `ProductSize` | Urun bedeni (EU/US/UK) | 6 |
-| 5 | `Product` | Urun (SKU) | 18 |
+| 1 | `ProductCategory` | Ürün kategorisi | 6 |
+| 2 | `ProductModel` | Ürün modeli | 11 |
+| 3 | `ProductColor` | Ürün rengi | 5 |
+| 4 | `ProductSize` | Ürün bedeni (EU/US/UK) | 6 |
+| 5 | `Product` | Ürün (SKU) | 18 |
 | 6 | `RawMaterial` | Hammadde | 17 |
-| 7 | `BillOfMaterials` | Urun agaci (BOM) | 10 |
+| 7 | `BillOfMaterials` | Ürün ağacı (BOM) | 10 |
 | 8 | `Warehouse` | Depo | 7 |
 | 9 | `WarehouseZone` | Depo zonu | 9 |
 | 10 | `WarehouseLocation` | Depo konumu | 13 |
-| 11 | `Inventory` | Envanter kaydi | 15 |
+| 11 | `Inventory` | Envanter kaydı | 15 |
 | 12 | `InventoryMovement` | Stok hareketi | 17 |
-| 13 | `Supplier` | Tedarikci | 15 |
-| 14 | `Customer` | Musteri | 13 |
-| 15 | `PurchaseOrder` | Satin alma siparisi | 15 |
-| 16 | `PurchaseOrderLine` | SA siparis kalemi | 10 |
-| 17 | `GoodsReceipt` | Mal kabul fisi | 11 |
-| 18 | `GoodsReceiptLine` | Kabul fisi kalemi | 13 |
-| 19 | `SalesOrder` | Satis siparisi | 17 |
-| 20 | `SalesOrderLine` | Satis siparis kalemi | 11 |
-| 21 | `StockCountTask` | Stok sayim gorevi | 11 |
-| 22 | `StockCountLine` | Sayim kalemi | 13 |
+| 13 | `Supplier` | Tedarikçi | 15 |
+| 14 | `Customer` | Müşteri | 13 |
+| 15 | `PurchaseOrder` | Satın alma siparişi | 15 |
+| 16 | `PurchaseOrderLine` | SA sipariş kalemi | 10 |
+| 17 | `GoodsReceipt` | Mal kabul fişi | 11 |
+| 18 | `GoodsReceiptLine` | Kabul fişi kalemi | 13 |
+| 19 | `SalesOrder` | Satış siparişi | 17 |
+| 20 | `SalesOrderLine` | Satış sipariş kalemi | 11 |
+| 21 | `StockCountTask` | Stok sayım görevi | 11 |
+| 22 | `StockCountLine` | Sayım kalemi | 13 |
 | 23 | `QualityInspection` | Kalite muayenesi | 15 |
-| 24 | `DefectType` | Kusur tipi tanimi | 7 |
-| 25 | `AlertRule` | Uyari kurali | 9 |
-| 26 | `Alert` | Uyari kaydi | 14 |
-| 27 | `UserProfile` | Kullanici profili | 10 |
-| 28 | `AuditLog` | Denetim gunlugu | 8 |
+| 24 | `DefectType` | Kusur tipi tanımı | 7 |
+| 25 | `AlertRule` | Uyarı kuralı | 9 |
+| 26 | `Alert` | Uyarı kaydı | 14 |
+| 27 | `UserProfile` | Kullanıcı profili | 10 |
+| 28 | `AuditLog` | Denetim günlüğü | 8 |
 
 ### 8.2 Enum Tipleri (13 adet)
 
-| # | Enum | Degerler |
+| # | Enum | Değerler |
 |---|------|----------|
 | 1 | `UserRole` | admin, warehouse_manager, operator_receiving, operator_shipping, quality_control, viewer |
 | 2 | `MovementType` | receive, putaway, pick, ship, transfer, adjust_in, adjust_out, production_in, production_out, return_in, return_out, count_adjust |
@@ -880,7 +880,7 @@ Proje, TypeScript'in tip sistemini kullanarak veritabani semasininin tam bir tip
 | 12 | `DefectSeverity` | critical, major, minor |
 | 13 | `DefectCategory` | knitting, linking, dyeing, finishing |
 
-Ek enum/tip tanimlari:
+Ek enum/tip tanımları:
 - `SockType`: ankle, crew, knee_high, no_show, quarter, thigh_high
 - `WarehouseType`: raw_material, finished_goods, mixed
 - `RawMaterialCategory`: yarn, elastic, dye, label, packaging, chemical
@@ -889,124 +889,124 @@ Ek enum/tip tanimlari:
 
 ### 8.3 View Tipleri (3 adet)
 
-| # | Tip Adi | Amac |
+| # | Tip Adı | Amaç |
 |---|---------|------|
-| 1 | `StockSummary` | SKU bazinda stok ozeti (durumu dahil) |
-| 2 | `RawMaterialStock` | Hammadde stok ozeti |
-| 3 | `LocationUtilization` | Zon bazinda konum kullanim orani |
+| 1 | `StockSummary` | SKU bazında stok özeti (durumu dahil) |
+| 2 | `RawMaterialStock` | Hammadde stok özeti |
+| 3 | `LocationUtilization` | Zon bazında konum kullanım oranı |
 
-### 8.4 Analitik Tipleri (analytics.ts - 201 satir)
+### 8.4 Analitik Tipleri (analytics.ts - 201 satır)
 
-| # | Tip Adi | Amac |
+| # | Tip Adı | Amaç |
 |---|---------|------|
-| 1 | `SPCSubgroup` | SPC alt grup olcumu |
+| 1 | `SPCSubgroup` | SPC alt grup ölçümü |
 | 2 | `SPCLimits` | Kontrol limitleri (UCL, CL, LCL) |
 | 3 | `XbarRResult` | X-bar/R analiz sonucu |
 | 4 | `IMRResult` | I-MR analiz sonucu |
-| 5 | `CapabilityResult` | Surec yeterlilik sonucu |
-| 6 | `DemandHistoryItem` | Talep gecmisi kaydi |
+| 5 | `CapabilityResult` | Süreç yeterlilik sonucu |
+| 6 | `DemandHistoryItem` | Talep geçmişi kaydı |
 | 7 | `ABCItemData` | ABC analiz girdi verisi |
-| 8 | `EOQDefaults` | EOQ varsayilan parametreler |
-| 9 | `MonteCarloResult` | Monte Carlo simulasyon sonucu |
-| 10 | `HoltSmoothingResult` | Holt duzlestirme sonucu |
-| 11 | `VSMStep` | VSM surec adimi |
-| 12 | `FiveSAudit` | 5S denetim kaydi |
-| 13 | `KanbanColumnStatus` | Kanban kolon durumu (7 deger) |
+| 8 | `EOQDefaults` | EOQ varsayılan parametreler |
+| 9 | `MonteCarloResult` | Monte Carlo simülasyon sonucu |
+| 10 | `HoltSmoothingResult` | Holt düzleştirme sonucu |
+| 11 | `VSMStep` | VSM süreç adımı |
+| 12 | `FiveSAudit` | 5S denetim kaydı |
+| 13 | `KanbanColumnStatus` | Kanban kolon durumu (7 değer) |
 | 14 | `KanbanItem` | Kanban kart verisi |
 | 15 | `MudaCategory` | MUDA israf kategorisi |
-| 16 | `ComparisonMetric` | Once/Sonra karsilastirma metrigi |
+| 16 | `ComparisonMetric` | Önce/Sonra karşılaştırma metriği |
 | 17 | `TTestResult` | t-Testi sonucu |
 | 18 | `RegressionResult` | Regresyon analiz sonucu |
 | 19 | `DescriptiveStatsResult` | Betimleyici istatistik sonucu |
-| 20 | `SPCMetricOption` | SPC metrik secenegi |
+| 20 | `SPCMetricOption` | SPC metrik seçeneği |
 
 ---
 
-## 9. Kullanici Arayuzu Bilesen Yapisi
+## 9. Kullanıcı Arayüzü Bileşen Yapısı
 
-### 9.1 shadcn/ui Bilesenler (28 adet)
+### 9.1 shadcn/ui Bileşenler (28 adet)
 
-Tum UI bilesenler, erisilebilirlik (a11y) standartlarina uygun Radix UI primitifleri uzerine insa edilmistir:
+Tüm UI bileşenler, erişilebilirlik (a11y) standartlarına uygun Radix UI primitifleri üzerine inşa edilmiştir:
 
-| # | Bilesen | Amac |
+| # | Bileşen | Amaç |
 |---|---------|------|
-| 1 | `AlertDialog` | Onay gerektiren islemler icin dialog |
-| 2 | `Avatar` | Kullanici profil resmi |
+| 1 | `AlertDialog` | Onay gerektiren işlemler için dialog |
+| 2 | `Avatar` | Kullanıcı profil resmi |
 | 3 | `Badge` | Durum etiketleri |
-| 4 | `Breadcrumb` | Sayfa yolu gostergesi |
+| 4 | `Breadcrumb` | Sayfa yolu göstergesi |
 | 5 | `Button` | Eylem butonu (variant destekli) |
-| 6 | `Calendar` | Tarih secici |
-| 7 | `Card` | Icerik karti |
-| 8 | `Chart` | Recharts sarmalayicisi |
+| 6 | `Calendar` | Tarih seçici |
+| 7 | `Card` | İçerik kartı |
+| 8 | `Chart` | Recharts sarmalayıcısı |
 | 9 | `Checkbox` | Onay kutusu |
 | 10 | `Command` | Komut paleti (arama) |
 | 11 | `Dialog` | Modal dialog |
-| 12 | `DropdownMenu` | Acilir menu |
-| 13 | `Form` | Form alani (react-hook-form) |
-| 14 | `Input` | Metin girisi |
+| 12 | `DropdownMenu` | Açılır menü |
+| 13 | `Form` | Form alanı (react-hook-form) |
+| 14 | `Input` | Metin girişi |
 | 15 | `Label` | Form etiketi |
-| 16 | `Popover` | Acilar bilgi kutusu |
-| 17 | `ScrollArea` | Kaydirmali alan |
-| 18 | `Select` | Secim listesi |
-| 19 | `Separator` | Ayirici cizgi |
+| 16 | `Popover` | Açılar bilgi kutusu |
+| 17 | `ScrollArea` | Kaydırmalı alan |
+| 18 | `Select` | Seçim listesi |
+| 19 | `Separator` | Ayırıcı çizgi |
 | 20 | `Sheet` | Yan panel |
-| 21 | `Sidebar` | Ana gezinme sidebari |
-| 22 | `Skeleton` | Yukleme iskeleti |
+| 21 | `Sidebar` | Ana gezinme sidebarı |
+| 22 | `Skeleton` | Yükleme iskeleti |
 | 23 | `Sonner` | Toast bildirim |
 | 24 | `Switch` | Anahtar toggle |
 | 25 | `Table` | Veri tablosu |
-| 26 | `Tabs` | Sekme yapisi |
-| 27 | `Textarea` | Cok satirli metin girisi |
-| 28 | `Tooltip` | Aracucu bilgisi |
+| 26 | `Tabs` | Sekme yapısı |
+| 27 | `Textarea` | Çok satırlı metin girişi |
+| 28 | `Tooltip` | Araç ucu bilgisi |
 
-### 9.2 Paylasilan Bilesenler (11 adet)
+### 9.2 Paylaşılan Bileşenler (11 adet)
 
-Proje genelinde tekrar kullanilan ozel bilesenler:
+Proje genelinde tekrar kullanılan özel bileşenler:
 
-| # | Bilesen | Dosya | Satir | Amac |
+| # | Bileşen | Dosya | Satır | Amaç |
 |---|---------|-------|-------|------|
-| 1 | `PageHeader` | page-header.tsx | 21 | Sayfa basligi + aciklama |
-| 2 | `DataTable` | data-table.tsx | 224 | TanStack Table sarmalayicisi, siralama + filtreleme |
-| 3 | `LoadingSkeleton` | loading-skeleton.tsx | 45 | Animasyonlu yukleme iskeleti |
-| 4 | `ErrorDisplay` | error-display.tsx | 27 | Hata mesaji + tekrar dene butonu |
-| 5 | `EmptyState` | empty-state.tsx | 24 | Bos durum gorseli + eylem butonu |
+| 1 | `PageHeader` | page-header.tsx | 21 | Sayfa başlığı + açıklama |
+| 2 | `DataTable` | data-table.tsx | 224 | TanStack Table sarmalayıcısı, sıralama + filtreleme |
+| 3 | `LoadingSkeleton` | loading-skeleton.tsx | 45 | Animasyonlu yükleme iskeleti |
+| 4 | `ErrorDisplay` | error-display.tsx | 27 | Hata mesajı + tekrar dene butonu |
+| 5 | `EmptyState` | empty-state.tsx | 24 | Boş durum görseli + eylem butonu |
 | 6 | `StatusBadge` | status-badge.tsx | 80 | Renkli durum etiketi (dinamik) |
-| 7 | `KPICard` | kpi-card.tsx | 54 | Anahtar performans gostergesi karti |
+| 7 | `KPICard` | kpi-card.tsx | 54 | Anahtar performans göstergesi kartı |
 | 8 | `ExportButtons` | export-buttons.tsx | 35 | PDF/Excel export butonu grubu |
-| 9 | `BarcodeScanner` | barcode-scanner.tsx | 152 | Kamera tabanli barkod/QR okuyucu |
-| 10 | `ConfirmDialog` | confirm-dialog.tsx | 58 | Islem onay dialogu |
-| 11 | `MockDataBadge` | mock-data-badge.tsx | 17 | Mock veri kullanim uyarisi |
+| 9 | `BarcodeScanner` | barcode-scanner.tsx | 152 | Kamera tabanlı barkod/QR okuyucu |
+| 10 | `ConfirmDialog` | confirm-dialog.tsx | 58 | İşlem onay dialogu |
+| 11 | `MockDataBadge` | mock-data-badge.tsx | 17 | Mock veri kullanım uyarısı |
 
-### 9.3 Grafik Cesitleri (Recharts)
+### 9.3 Grafik Çeşitleri (Recharts)
 
-Sistem genelinde 7 farkli Recharts grafik tipi kullanilmaktadir:
+Sistem genelinde 7 farklı Recharts grafik tipi kullanılmaktadır:
 
-| Grafik Tipi | Kullanan Moduller | Amac |
+| Grafik Tipi | Kullanan Modüller | Amaç |
 |-------------|-------------------|------|
-| `BarChart` | Dashboard, Locations, Forecasting, Lean, Comparison | Kategori karsilastirmasi |
+| `BarChart` | Dashboard, Locations, Forecasting, Lean, Comparison | Kategori karşılaştırması |
 | `LineChart` | SPC, Forecasting, Lean | Zaman serisi trendi |
-| `PieChart` | Dashboard | Dagilim gorsellestirme |
-| `AreaChart` | Dashboard, SPC | Alan bazli trend |
+| `PieChart` | Dashboard | Dağılım görselleştirme |
+| `AreaChart` | Dashboard, SPC | Alan bazlı trend |
 | `RadarChart` | Lean | MUDA israf radar |
-| `ComposedChart` | Forecasting | Coklu grafik birlesimi (Bar+Line) |
-| `ScatterChart` | Comparison | Nokta dagalimi + regresyon |
+| `ComposedChart` | Forecasting | Çoklu grafik birleşimi (Bar+Line) |
+| `ScatterChart` | Comparison | Nokta dağılımı + regresyon |
 
-### 9.4 Turkce Lokalizasyon
+### 9.4 Türkçe Lokalizasyon
 
-Sistem tamamen Turkce arayuz sunar. 10 adet etiket sozlugu tanimlanmistir:
+Sistem tamamen Türkçe arayüz sunar. 10 adet etiket sözlüğü tanımlanmıştır:
 
-| # | Sozluk | Anahtar Sayisi | Amac |
+| # | Sözlük | Anahtar Sayısı | Amaç |
 |---|--------|----------------|------|
-| 1 | `ROLE_LABELS` | 6 | Kullanici rolleri |
+| 1 | `ROLE_LABELS` | 6 | Kullanıcı rolleri |
 | 2 | `MOVEMENT_TYPE_LABELS` | 12 | Stok hareket tipleri |
-| 3 | `PO_STATUS_LABELS` | 7 | Satin alma siparis durumlari |
-| 4 | `SO_STATUS_LABELS` | 10 | Satis siparis durumlari |
-| 5 | `QUALITY_STATUS_LABELS` | 5 | Kalite durumlari |
-| 6 | `SEVERITY_LABELS` | 3 | Uyari siddetleri |
+| 3 | `PO_STATUS_LABELS` | 7 | Satın alma sipariş durumları |
+| 4 | `SO_STATUS_LABELS` | 10 | Satış sipariş durumları |
+| 5 | `QUALITY_STATUS_LABELS` | 5 | Kalite durumları |
+| 6 | `SEVERITY_LABELS` | 3 | Uyarı şiddetleri |
 | 7 | `ZONE_TYPE_LABELS` | 6 | Zon tipleri |
-| 8 | `SOCK_TYPE_LABELS` | 6 | Corap tipleri |
+| 8 | `SOCK_TYPE_LABELS` | 6 | Çorap tipleri |
 | 9 | `RAW_MATERIAL_CATEGORY_LABELS` | 6 | Hammadde kategorileri |
-| 10 | `PRIORITY_LABELS` | 4 | Siparis oncelikleri |
+| 10 | `PRIORITY_LABELS` | 4 | Sipariş öncelikleri |
 
 Ek analitik etiketler:
 - `KANBAN_COLUMN_LABELS` (7 adet)
@@ -1019,270 +1019,270 @@ Ek analitik etiketler:
 
 ## 10. Export ve Raporlama Sistemi
 
-Sistem, iki farkli formatta rapor olusturma yetenegine sahiptir.
+Sistem, iki farklı formatta rapor oluşturma yeteneğine sahiptir.
 
 ### 10.1 PDF Export (jsPDF + AutoTable)
 
-**Dosya:** `src/lib/export/pdf.ts` (186 satir, 4 export fonksiyon + 1 dahili)
+**Dosya:** `src/lib/export/pdf.ts` (186 satır, 4 export fonksiyon + 1 dahili)
 
-| # | Fonksiyon | Cikti Dosya Adi | Icerik |
+| # | Fonksiyon | Çıktı Dosya Adı | İçerik |
 |---|-----------|-----------------|--------|
-| 1 | `exportInspectionReportPDF` | kalite-muayene-raporu.pdf | Muayene No, SKU, Urun, Sonuc, Hata, Tarih, Kontrolor |
-| 2 | `exportABCAnalysisPDF` | abc-analiz-raporu.pdf | Sira, Sinif (renkli), Urun, SKU, Deger, %, Kumulatif % |
-| 3 | `exportSPCReportPDF` | spc-raporu.pdf | Sigma, DPMO, Dogruluk, Cpk, Cp, UCL/CL/LCL |
-| 4 | `exportComparisonReportPDF` | once-sonra-karsilastirma-raporu.pdf | Metrik, Once, Sonra, Iyilesme, t, p, Anlamlilik |
+| 1 | `exportInspectionReportPDF` | kalite-muayene-raporu.pdf | Muayene No, SKU, Ürün, Sonuç, Hata, Tarih, Kontrolör |
+| 2 | `exportABCAnalysisPDF` | abc-analiz-raporu.pdf | Sıra, Sınıf (renkli), Ürün, SKU, Değer, %, Kümülatif % |
+| 3 | `exportSPCReportPDF` | spc-raporu.pdf | Sigma, DPMO, Doğruluk, Cpk, Cp, UCL/CL/LCL |
+| 4 | `exportComparisonReportPDF` | once-sonra-karsilastirma-raporu.pdf | Metrik, Önce, Sonra, İyileşme, t, p, Anlamlılık |
 
-PDF ortak ozellikleri:
-- Corap WMS basligi ve logosu
-- Olusturma tarihi (Turkce format)
-- Renkli tablo baslik satiri (mavi)
-- ABC raporunda sinif bazinda renk kodlama (A=kirmizi, B=sari, C=yesil)
+PDF ortak özellikleri:
+- Çorap WMS başlığı ve logosu
+- Oluşturma tarihi (Türkçe format)
+- Renkli tablo başlık satırı (mavi)
+- ABC raporunda sınıf bazında renk kodlama (A=kırmızı, B=sarı, C=yeşil)
 
 ### 10.2 Excel Export (SheetJS/XLSX)
 
-**Dosya:** `src/lib/export/excel.ts` (182 satir, 5 export fonksiyon + 1 dahili)
+**Dosya:** `src/lib/export/excel.ts` (182 satır, 5 export fonksiyon + 1 dahili)
 
-| # | Fonksiyon | Cikti Dosya Adi | Sayfa(lar) |
+| # | Fonksiyon | Çıktı Dosya Adı | Sayfa(lar) |
 |---|-----------|-----------------|------------|
-| 1 | `exportInventoryExcel` | envanter-raporu.xlsx | Envanter (SKU, Ad, Kategori, Miktar, Konum, Maliyet, Deger, Durum) |
-| 2 | `exportMovementHistoryExcel` | hareket-raporu.xlsx | Hareketler (Tip, Kalem, Miktar, Birim, Tarih, Operator) |
-| 3 | `exportABCAnalysisExcel` | abc-analiz-raporu.xlsx | ABC Analizi (Sira, Sinif, Urun, SKU, Miktar, Maliyet, Deger, %) |
-| 4 | `exportSPCDataExcel` | spc-olcum-raporu.xlsx | SPC Olcumleri (Alt Grup, Metrik, Ortalama, Aralik, Olcumler) |
-| 5 | `exportComparisonExcel` | once-sonra-karsilastirma.xlsx | Ozet + Ham Veri (2 sayfa) |
+| 1 | `exportInventoryExcel` | envanter-raporu.xlsx | Envanter (SKU, Ad, Kategori, Miktar, Konum, Maliyet, Değer, Durum) |
+| 2 | `exportMovementHistoryExcel` | hareket-raporu.xlsx | Hareketler (Tip, Kalem, Miktar, Birim, Tarih, Operatör) |
+| 3 | `exportABCAnalysisExcel` | abc-analiz-raporu.xlsx | ABC Analizi (Sıra, Sınıf, Ürün, SKU, Miktar, Maliyet, Değer, %) |
+| 4 | `exportSPCDataExcel` | spc-olcum-raporu.xlsx | SPC Ölçümleri (Alt Grup, Metrik, Ortalama, Aralık, Ölçümler) |
+| 5 | `exportComparisonExcel` | once-sonra-karsilastirma.xlsx | Özet + Ham Veri (2 sayfa) |
 
-### 10.3 Sayfa Bazli Export Ozellikleri
+### 10.3 Sayfa Bazlı Export Özellikleri
 
-| Sayfa | PDF | Excel | Ozel Format |
+| Sayfa | PDF | Excel | Özel Format |
 |-------|-----|-------|-------------|
-| Envanter | - | Evet | Stok durumuna gore filtreleme |
-| Kalite | Evet | - | Sonuc renk kodlama |
+| Envanter | - | Evet | Stok durumuna göre filtreleme |
+| Kalite | Evet | - | Sonuç renk kodlama |
 | SPC | Evet | Evet | Kontrol limitleri dahil |
-| Forecasting (ABC) | Evet | Evet | ABC sinif renkleme |
-| Comparison | Evet | Evet | t-testi sonuclari + ham veri |
+| Forecasting (ABC) | Evet | Evet | ABC sınıf renkleme |
+| Comparison | Evet | Evet | t-testi sonuçları + ham veri |
 
 ---
 
-## 11. Sirkete Katkisi / Is Degeri
+## 11. Şirkete Katkısı / İş Değeri
 
-### 11.1 Once/Sonra Metrik Karsilastirma Tablosu
+### 11.1 Önce/Sonra Metrik Karşılaştırma Tablosu
 
-Asagidaki tablo, WMS uygulamasi oncesi 6 aylik veri ile uygulama sonrasi 6 aylik verinin karsilastirmasini gostermektedir:
+Aşağıdaki tablo, WMS uygulaması öncesi 6 aylık veri ile uygulama sonrası 6 aylık verinin karşılaştırmasını göstermektedir:
 
-| # | Metrik | Oncesi (Ort.) | Sonrasi (Ort.) | Iyilestirme | Birim |
+| # | Metrik | Öncesi (Ort.) | Sonrası (Ort.) | İyileştirme | Birim |
 |---|--------|---------------|----------------|-------------|-------|
-| 1 | Toplama Dogrulugu | %94.05 | %99.08 | +%5.35 | % |
-| 2 | Siparis Dongu Suresi | 4.53 | 1.78 | -%60.7 | saat |
-| 3 | Envanter Dogrulugu | %87.98 | %97.42 | +%10.73 | % |
-| 4 | Stok Tukenmesi Orani | %11.83 | %2.97 | -%74.9 | % |
-| 5 | Isgucu Verimliligi | 15.0 | 28.0 | +%86.7 | siparis/kisi |
-| 6 | Siparis Karsilama Orani | %91.0 | %98.0 | +%7.69 | % |
-| 7 | Depo Kullanim Orani | %65.17 | %82.0 | +%25.82 | % |
-| 8 | Kalite Gecis Orani | %92.0 | %97.0 | +%5.43 | % |
+| 1 | Toplama Doğruluğu | %94.05 | %99.08 | +%5.35 | % |
+| 2 | Sipariş Döngü Süresi | 4.53 | 1.78 | -%60.7 | saat |
+| 3 | Envanter Doğruluğu | %87.98 | %97.42 | +%10.73 | % |
+| 4 | Stok Tükenmesi Oranı | %11.83 | %2.97 | -%74.9 | % |
+| 5 | İşgücü Verimliliği | 15.0 | 28.0 | +%86.7 | sipariş/kişi |
+| 6 | Sipariş Karşılama Oranı | %91.0 | %98.0 | +%7.69 | % |
+| 7 | Depo Kullanım Oranı | %65.17 | %82.0 | +%25.82 | % |
+| 8 | Kalite Geçiş Oranı | %92.0 | %97.0 | +%5.43 | % |
 
-### 11.2 Istatistiksel Anlamlilik (t-Testi)
+### 11.2 İstatistiksel Anlamlılık (t-Testi)
 
-Her metrik icin eslestirilmis t-testi uygulanarak iyilestirmelerin rastlantisal olup olmadigi test edilmistir:
+Her metrik için eşleştirilmiş t-testi uygulanarak iyileştirmelerin rastlantısal olup olmadığı test edilmiştir:
 
-- **H₀:** WMS oncesi ve sonrasi arasinda anlamli fark yoktur (μ_d = 0)
-- **H₁:** Anlamli fark vardir (μ_d ≠ 0)
-- **alpha = 0.05** (guven duzeyi: %95)
+- **H₀:** WMS öncesi ve sonrası arasında anlamlı fark yoktur (μ_d = 0)
+- **H₁:** Anlamlı fark vardır (μ_d ≠ 0)
+- **alpha = 0.05** (güven düzeyi: %95)
 
-Tum 8 metrik icin p < 0.05 olarak hesaplanmis, yani iyilestirmeler istatistiksel olarak anlamlidir. WMS uygulamasinin olcumlenebilir, kanitlanabilir bir operasyonel iyilestirme sagladigi gosterilmistir.
+Tüm 8 metrik için p < 0.05 olarak hesaplanmış, yani iyileştirmeler istatistiksel olarak anlamlıdır. WMS uygulamasının ölçümlenebilir, kanıtlanabilir bir operasyonel iyileştirme sağladığı gösterilmiştir.
 
-### 11.3 Operasyonel Iyilestirme Detaylari
+### 11.3 Operasyonel İyileştirme Detayları
 
-**1. Toplama Dogrulugu (%94.05 → %99.08):**
-- Barkod tabanli toplama sureci sayesinde yanlis urun gonderimi neredeyse sifira indi
-- Musteri iadeleri azaldi, musteri memnuniyeti artti
+**1. Toplama Doğruluğu (%94.05 → %99.08):**
+- Barkod tabanlı toplama süreci sayesinde yanlış ürün gönderimi neredeyse sıfıra indi
+- Müşteri iadeleri azaldı, müşteri memnuniyeti arttı
 
-**2. Siparis Dongu Suresi (4.53 → 1.78 saat, -%60.7):**
-- Konum bazli yonlendirme ile toplama rotasi optimize edildi
-- Onceliklendirme sistemi ile acil siparisler hizla karsilandi
-- Kagit bazli islemlerden dijital is akisina gecis
+**2. Sipariş Döngü Süresi (4.53 → 1.78 saat, -%60.7):**
+- Konum bazlı yönlendirme ile toplama rotası optimize edildi
+- Önceliklendirme sistemi ile acil siparişler hızla karşılandı
+- Kağıt bazlı işlemlerden dijital iş akışına geçiş
 
-**3. Envanter Dogrulugu (%87.98 → %97.42):**
-- Her stok hareketi dijital ortamda kayit altina alindi
-- Dongusel sayim ile surekli dogrulama mekanizmasi kuruldu
-- Kayip stok sorunu buyuk olcude cozuldu
+**3. Envanter Doğruluğu (%87.98 → %97.42):**
+- Her stok hareketi dijital ortamda kayıt altına alındı
+- Döngüsel sayım ile sürekli doğrulama mekanizması kuruldu
+- Kayıp stok sorunu büyük ölçüde çözüldü
 
-**4. Stok Tukenmesi Orani (%11.83 → %2.97, -%74.9):**
-- EOQ ve guvenlik stogu hesaplamalari ile optimum siparis noktalari belirlendi
-- Otomatik dusuk stok uyarilari sayesinde stok tukenmeleri onlendi
-- ABC siniflandirmasi ile kritik urunlere oncelik verildi
+**4. Stok Tükenmesi Oranı (%11.83 → %2.97, -%74.9):**
+- EOQ ve güvenlik stoğu hesaplamaları ile optimum sipariş noktaları belirlendi
+- Otomatik düşük stok uyarıları sayesinde stok tukenmeleri önlendi
+- ABC sınıflandırması ile kritik ürünlere öncelik verildi
 
-**5. Isgucu Verimliligi (15 → 28 siparis/kisi, +%86.7):**
-- Dijital is emirleri ile el ile kagit islemleri ortadan kaldirildi
-- Yon optimizasyonu ile operatorlerin depo ici hareketi azaldi
-- Toplu islem yetenegi ile verimlilik artti
+**5. İşgücü Verimliliği (15 → 28 sipariş/kişi, +%86.7):**
+- Dijital iş emirleri ile el ile kağıt işlemleri ortadan kaldırıldı
+- Yön optimizasyonu ile operatörlerin depo içi hareketi azaldı
+- Toplu işlem yeteneği ile verimlilik arttı
 
-**6. Siparis Karsilama Orani (%91.0 → %98.0):**
-- Gercek zamanli stok gorunurlugu ile stokta olmayan urunlere siparis onlendi
-- Onceliklendirme sistemi ile son tarihlere uyum iyilesti
+**6. Sipariş Karşılama Oranı (%91.0 → %98.0):**
+- Gerçek zamanlı stok görünürlüğü ile stokta olmayan ürünlere sipariş önlendi
+- Önceliklendirme sistemi ile son tarihlere uyum iyileşti
 
-**7. Depo Kullanim Orani (%65.17 → %82.0, +%25.82):**
-- Konum bazli envanter yonetimi ile bos alanlar tespit edildi
-- ABC siniflandirmasi ile yuksek devir urunler kolay erisilen konumlara yerlestirildi
-- Kapasite izleme paneli ile proaktif alan planlamasi
+**7. Depo Kullanım Oranı (%65.17 → %82.0, +%25.82):**
+- Konum bazlı envanter yönetimi ile boş alanlar tespit edildi
+- ABC sınıflandırması ile yüksek devir ürünler kolay erişilen konumlara yerleştirildi
+- Kapasite izleme paneli ile proaktif alan planlaması
 
-**8. Kalite Gecis Orani (%92.0 → %97.0):**
-- Sistematik kalite muayenesi sureci ile kusurlar erken tespit edildi
-- Kusur tip ve siddet analizi ile kok nedenler belirlendi
-- Tedarikcilerin kalite performans takibi
+**8. Kalite Geçiş Oranı (%92.0 → %97.0):**
+- Sistematik kalite muayenesi süreci ile kusurlar erken tespit edildi
+- Kusur tip ve şiddet analizi ile kök nedenler belirlendi
+- Tedarikçilerin kalite performans takibi
 
 ---
 
-## 12. Akademik Deger
+## 12. Akademik Değer
 
-### 12.1 Endustri Muhendisligi Hesaplama Fonksiyonlari
+### 12.1 Endüstri Mühendisliği Hesaplama Fonksiyonları
 
-Bu proje, endustri muhendisligi mufredat iceriginin dogrudan yazilim uygulamasina donusturulmesini gostermektedir. Kullanilan IE konulari:
+Bu proje, endüstri mühendisliği müfredat içeriğinin doğrudan yazılım uygulamasına dönüştürülmesini göstermektedir. Kullanılan IE konuları:
 
 | Alan | Konu | Uygulama |
 |------|------|----------|
-| Envanter Yonetimi | EOQ, Guvenlik Stogu, ROP | Optimum siparis miktari hesaplama |
-| Siniflandirma | ABC/Pareto Analizi | Envanter onceliklendirme |
+| Envanter Yönetimi | EOQ, Güvenlik Stoğu, ROP | Optimum sipariş miktarı hesaplama |
+| Sınıflandırma | ABC/Pareto Analizi | Envanter önceliklendirme |
 | Tahminleme | SES, Holt, Monte Carlo | Talep tahmini ve stokastik modelleme |
-| Kalite | SPC, Cp/Cpk, DPMO, Sigma | Surec kontrol ve yeterlilik |
-| Yalin Uretim | Takt, VSM, PCE, 5S, MUDA | Israf azaltma ve surec iyilestirme |
-| Istatistik | t-Testi, Regresyon, Betimleyici | Once/sonra karsilastirma |
+| Kalite | SPC, Cp/Cpk, DPMO, Sigma | Süreç kontrol ve yeterlilik |
+| Yalın Üretim | Takt, VSM, PCE, 5S, MUDA | İsraf azaltma ve süreç iyileştirme |
+| İstatistik | t-Testi, Regresyon, Betimleyici | Önce/sonra karşılaştırma |
 
-### 12.2 Kullanilan Akademik Referanslar
+### 12.2 Kullanılan Akademik Referanslar
 
 1. **Montgomery, D.C.** (2019). *Introduction to Statistical Quality Control*. 8th ed. Wiley.
-   - SPC kontrol grafikleri, Cp/Cpk surec yeterliligi
+   - SPC kontrol grafikleri, Cp/Cpk süreç yeterliliği
 
 2. **Harris, F.W.** (1913). "How Many Parts to Make at Once." *Factory, The Magazine of Management*, 10(2), 135-136.
-   - Ekonomik Siparis Miktari (EOQ) modeli
+   - Ekonomik Sipariş Miktarı (EOQ) modeli
 
 3. **Holt, C.C.** (1957). "Forecasting Seasonals and Trends by Exponentially Weighted Moving Averages." ONR Memorandum 52.
-   - Cift ussel duzlestirme (trend dahil tahmin)
+   - Çift üssel düzleştirme (trend dahil tahmin)
 
 4. **Metropolis, N. & Ulam, S.** (1949). "The Monte Carlo Method." *Journal of the American Statistical Association*, 44(247), 335-341.
-   - Monte Carlo simulasyon yontemi
+   - Monte Carlo simülasyon yöntemi
 
 5. **Womack, J.P. & Jones, D.T.** (2003). *Lean Thinking*. Free Press.
-   - Yalin dusunce ve israf azaltma
+   - Yalın düşünce ve israf azaltma
 
 6. **Rother, M. & Shook, J.** (2003). *Learning to See*. Lean Enterprise Institute.
-   - Deger Akis Haritalama (VSM) yontemi
+   - Değer Akış Haritalama (VSM) yöntemi
 
 7. **Student (Gosset, W.S.)** (1908). "The Probable Error of a Mean." *Biometrika*, 6(1), 1-25.
-   - t-Testi istatistiksel yontemi
+   - t-Testi istatistiksel yöntemi
 
 8. **Abramowitz, M. & Stegun, I.A.** (1964). *Handbook of Mathematical Functions*. National Bureau of Standards.
-   - Normal CDF polinomial yaklasimi
+   - Normal CDF polinomial yaklaşımı
 
 9. **Hirano, H.** (1995). *5 Pillars of the Visual Workplace*. Productivity Press.
-   - 5S is yeri duzeni metodolojisi
+   - 5S iş yeri düzeni metodolojisi
 
 10. **Ohno, T.** (1988). *Toyota Production System*. Productivity Press.
     - 7 israf (MUDA) kategorileri
 
-### 12.3 Ozel Algoritma Uygulamalari
+### 12.3 Özel Algoritma Uygulamaları
 
-**Box-Muller Transformasyonu (Monte Carlo icin):**
-Duzgun dagilan U(0,1) rastgele sayilardan normal dagilima gecis:
+**Box-Muller Transformasyonu (Monte Carlo için):**
+Düzgün dağılan U(0,1) rastgele sayılardan normal dağılıma geçiş:
 ```
 Z₁ = √(-2 ln U₁) × cos(2πU₂)
 Z₂ = √(-2 ln U₁) × sin(2πU₂)
 ```
-Proje icinde: `calculations-forecast.ts`, satir 27-30
+Proje içinde: `calculations-forecast.ts`, satır 27-30
 
-**Hill (1970) t-Dagilim Yaklasimi:**
-t-dagilimi p-degeri hesaplamasi icin:
-- df >= 30 icin normal yaklasim
-- df < 30 icin Beta fonksiyonu yaklasimi
-Proje icinde: `calculations-statistics.ts`, satir 81-97
+**Hill (1970) t-Dağılım Yaklaşımı:**
+t-dağılımı p-değeri hesaplaması için:
+- df >= 30 için normal yaklaşım
+- df < 30 için Beta fonksiyonu yaklaşımı
+Proje içinde: `calculations-statistics.ts`, satır 81-97
 
 **Continued Fraction - Incomplete Beta:**
-t-testi p-degeri hesaplamasi icin gerekli eksik Beta fonksiyonunun basitlestirilmis yaklasimi.
-Proje icinde: `calculations-statistics.ts`, satir 122-140
+t-testi p-değeri hesaplaması için gerekli eksik Beta fonksiyonunun basitleştirilmiş yaklaşımı.
+Proje içinde: `calculations-statistics.ts`, satır 122-140
 
 ---
 
-## 13. Teknik Metriklerin Ozet Tablosu
+## 13. Teknik Metriklerin Özet Tablosu
 
-| Kategori | Metrik | Deger |
+| Kategori | Metrik | Değer |
 |----------|--------|-------|
 | **Genel** | Toplam kaynak dosya | 99 |
-| | Toplam kod satiri | ~18.073 |
+| | Toplam kod satırı | ~18.073 |
 | | TypeScript strict hata | 0 |
-| **Sayfalar** | WMS temel modulleri | 11 |
-| | Analitik modulleri | 4 |
-| | Destek sayfalari | 4 (Raporlar, Ayarlar, Login, Ana) |
-| | Toplam sayfa satiri | ~9.676 |
-| **Hesaplama** | Hesaplama dosyasi | 5 |
-| | Hesaplama satiri | 913 |
-| | Export edilmis fonksiyon | 33 |
+| **Sayfalar** | WMS temel modülleri | 11 |
+| | Analitik modülleri | 4 |
+| | Destek sayfaları | 4 (Raporlar, Ayarlar, Login, Ana) |
+| | Toplam sayfa satırı | ~9.676 |
+| **Hesaplama** | Hesaplama dosyası | 5 |
+| | Hesaplama satırı | 913 |
+| | Export edilmiş fonksiyon | 33 |
 | **Veri Modeli** | Entity tipi (database.ts) | 28 |
 | | Analitik tip (analytics.ts) | 20 |
 | | Enum tipi | 13+ |
-| **Bilesenler** | shadcn/ui bilesen | 28 |
-| | Paylasilan bilesen | 11 |
-| | Layout bilesen | 2 (Sidebar, Header) |
-| **API** | Server Action dosyasi | 11 |
+| **Bileşenler** | shadcn/ui bileşen | 28 |
+| | Paylaşılan bileşen | 11 |
+| | Layout bileşen | 2 (Sidebar, Header) |
+| **API** | Server Action dosyası | 11 |
 | | Server Action fonksiyonu | 49 |
 | **Export** | PDF fonksiyonu | 4 |
 | | Excel fonksiyonu | 5 |
-| **Veri** | Mock data dosyasi | 6 |
-| | Turkce etiket sozlugu | 10+ |
-| **Guvenlik** | Kullanici rolu | 6 |
-| | Izin modulu | 13 |
-| | Izin eylemi | 4 (View, Create, Edit, Delete) |
+| **Veri** | Mock data dosyası | 6 |
+| | Türkçe etiket sözlüğü | 10+ |
+| **Güvenlik** | Kullanıcı rolü | 6 |
+| | İzin modülü | 13 |
+| | İzin eylemi | 4 (View, Create, Edit, Delete) |
 
 ---
 
-## 14. Sinirliliklar ve Gelecek Calisma
+## 14. Sınırlılıklar ve Gelecek Çalışma
 
-### 14.1 Mevcut Sinirliliklar
+### 14.1 Mevcut Sınırlılıklar
 
-| # | Sinirlilik | Aciklama |
+| # | Sınırlılık | Açıklama |
 |---|-----------|----------|
-| 1 | Demo Modu | Supabase baglantisi olmadan mock veriyle calisir, gercek veri kaliciligi yok |
-| 2 | Tek Dil | Arayuz yalnizca Turkce, coklu dil destegi yok |
-| 3 | Mobil Uygulama | Responsive web tasarimi var, ancak native mobil uygulama yok |
-| 4 | Entegrasyon | ERP, muhasebe, kargo firmasi entegrasyonlari henuz uygulanmamis |
-| 5 | Barkod Yazdirma | Barkod okuma var, ancak barkod/etiket yazdirma modulu yok |
-| 6 | Raporlama | Temel raporlar mevcut, gelismis dashboard ozellestirilmesi sinirli |
-| 7 | Cevrimdisi | Cevrimdisi calisma destegi yok |
+| 1 | Demo Modu | Supabase bağlantısı olmadan mock veriyle çalışır, gerçek veri kalıcılığı yok |
+| 2 | Tek Dil | Arayüz yalnızca Türkçe, çoklu dil desteği yok |
+| 3 | Mobil Uygulama | Responsive web tasarımı var, ancak native mobil uygulama yok |
+| 4 | Entegrasyon | ERP, muhasebe, kargo firması entegrasyonları henüz uygulanmamış |
+| 5 | Barkod Yazdırma | Barkod okuma var, ancak barkod/etiket yazdırma modülü yok |
+| 6 | Raporlama | Temel raporlar mevcut, gelişmiş dashboard özelleştirilmesi sınırlı |
+| 7 | Çevrimdışı | Çevrimdışı çalışma desteği yok |
 
-### 14.2 Gelecek Calisma Alanlari
+### 14.2 Gelecek Çalışma Alanları
 
-| # | Alan | Planlanan Ozellikler |
+| # | Alan | Planlanan Özellikler |
 |---|------|---------------------|
-| 1 | ERP Entegrasyonu | Muhasebe ve finans modulleriyle veri senkronizasyonu |
-| 2 | Mobil Uygulama | React Native ile barkod taramali mobil depo uygulamasi |
-| 3 | Gelismis Tahmin | ARIMA, Prophet gibi ileri zaman serisi modelleri |
-| 4 | IoT Entegrasyonu | RFID okuyucu, sicaklik sensor verileri |
-| 5 | Makine Ogrenmesi | Talep tahmininde ML modelleri, anomali tespiti |
-| 6 | Coklu Dil | i18n destegiyle Ingilizce ve diger diller |
-| 7 | Barkod/Etiket Yazdirma | Termal yazici entegrasyonu |
-| 8 | Cevrimdisi Mod | PWA ile cevrimdisi barkod tarama ve senkronizasyon |
-| 9 | Gorsellestirme | 3D depo gorunumu ve isil harita |
-| 10 | API | Ucuncu taraf sistemler icin REST API katmani |
+| 1 | ERP Entegrasyonu | Muhasebe ve finans modülleriyle veri senkronizasyonu |
+| 2 | Mobil Uygulama | React Native ile barkod taramalı mobil depo uygulaması |
+| 3 | Gelişmiş Tahmin | ARIMA, Prophet gibi ileri zaman serisi modelleri |
+| 4 | IoT Entegrasyonu | RFID okuyucu, sıcaklık sensör verileri |
+| 5 | Makine Öğrenmesi | Talep tahmininde ML modelleri, anomali tespiti |
+| 6 | Çoklu Dil | i18n desteğiyle İngilizce ve diğer diller |
+| 7 | Barkod/Etiket Yazdırma | Termal yazıcı entegrasyonu |
+| 8 | Çevrimdışı Mod | PWA ile çevrimdışı barkod tarama ve senkronizasyon |
+| 9 | Görselleştirme | 3D depo görünümü ve ısıl harita |
+| 10 | API | Üçüncü taraf sistemler için REST API katmanı |
 
 ---
 
-## 15. Sonuc
+## 15. Sonuç
 
-Corap WMS projesi, bir corap fabrikasinin depo yonetimi ihtiyaclarini karsilayan kapsamli bir web uygulamasidir. Projenin onemli ozellikleri sunlardir:
+Çorap WMS projesi, bir çorap fabrikasının depo yönetimi ihtiyaçlarını karşılayan kapsamlı bir web uygulamasıdır. Projenin önemli özellikleri şunlardır:
 
-1. **Tam Islevsel WMS:** 11 temel modul ile mal kabul, sevkiyat, envanter, kalite kontrol, stok sayimi gibi tum depo operasyonlarini kapsar.
+1. **Tam İşlevsel WMS:** 11 temel modül ile mal kabul, sevkiyat, envanter, kalite kontrol, stok sayımı gibi tüm depo operasyonlarını kapsar.
 
-2. **Endustri Muhendisligi Entegrasyonu:** 4 analitik modul ve 33 hesaplama fonksiyonu ile SPC, EOQ, ABC, Monte Carlo, VSM, t-testi gibi IE araclarini dogrudan sisteme entegre eder. Bu, sistemi standart bir WMS'in otesine tasir.
+2. **Endüstri Mühendisliği Entegrasyonu:** 4 analitik modül ve 33 hesaplama fonksiyonu ile SPC, EOQ, ABC, Monte Carlo, VSM, t-testi gibi IE araçlarını doğrudan sisteme entegre eder. Bu, sistemi standart bir WMS'in ötesine taşır.
 
-3. **Olculebilir Is Degeri:** 8 temel operasyonel metrikte WMS oncesi ve sonrasi karsilastirma yapilmis, tum iyilestirmeler istatistiksel olarak anlamli bulunmustur. Ornegin siparis dongu suresi %60.7 azalmis, envanter dogrulugu %10.73 artmistir.
+3. **Ölçülebilir İş Değeri:** 8 temel operasyonel metrikte WMS öncesi ve sonrası karşılaştırma yapılmış, tüm iyileştirmeler istatistiksel olarak anlamlı bulunmuştur. Örneğin sipariş döngü süresi %60.7 azalmış, envanter doğruluğu %10.73 artmıştır.
 
-4. **Uretim Kalitesinde Kod:** 99 dosya, ~18.073 satir TypeScript kodu, 0 tip hatasi, RBAC guvenlik sistemi, kapsamli hata yonetimi ve Turkce lokalizasyon ile uretim ortamina hazir kalitededir.
+4. **Üretim Kalitesinde Kod:** 99 dosya, ~18.073 satır TypeScript kodu, 0 tip hatası, RBAC güvenlik sistemi, kapsamlı hata yönetimi ve Türkçe lokalizasyon ile üretim ortamına hazır kalitededir.
 
-5. **Akademik Temel:** Tum hesaplamalar akademik referanslara dayanmakta olup, formullerin kaynak kodda matematiksel ifadeleri birebir uygulanmistir.
+5. **Akademik Temel:** Tüm hesaplamalar akademik referanslara dayanmakta olup, formüllerin kaynak kodda matematiksel ifadeleri birebir uygulanmıştır.
 
-6. **Modern Teknoloji Yigini:** Next.js 16, React 19, TypeScript Strict, Supabase, shadcn/ui gibi en guncel teknolojilerle insa edilmistir.
+6. **Modern Teknoloji Yığını:** Next.js 16, React 19, TypeScript Strict, Supabase, shadcn/ui gibi en güncel teknolojilerle inşa edilmiştir.
 
-Bu proje, endustri muhendisligi bilgisinin yazilim muhendisligi pratigiyle birlestirilerek gercek bir fabrikanin operasyonel verimliligini artirabilecegini somut olarak gostermektedir.
+Bu proje, endüstri mühendisliği bilgisinin yazılım mühendisliği pratiğiyle birleştirilerek gerçek bir fabrikanın operasyonel verimliliğini artırabileceğini somut olarak göstermektedir.
 
 ---
 
-**Rapor Tarihi:** Subat 2026
-**Toplam Rapor Satiri:** 700+
-**Yazilim:** Corap WMS v0.1.0
+**Rapor Tarihi:** Şubat 2026
+**Toplam Rapor Satırı:** 700+
+**Yazılım:** Çorap WMS v0.1.0
